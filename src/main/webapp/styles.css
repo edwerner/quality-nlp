@@ -6,6 +6,18 @@ body, html {
 	height: 100%;
 }
 
-ight: 100%;
+.output {
+	width: 100%;
+	margin-top: 20px;
+}
+
+.entry {
+	font-size: 1.5vw;
+	margin-left: 20px;
+	padding: 2px;
+}
+
+.form-container {
+	width: 100%;
 }
 

@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <!DOCTYPE HTML>
 <head>
 	<!-- Latest compiled and minified CSS -->
@@ -7,10 +8,10 @@
 	<style><%@ include file="flex.css"%></style>
 </head>
 <body>
-	<div class="container flex flex-row flex-center">
+	<div class="container flex flex-column flex-center">
 		<div class="content flex flex-row flex-center">
 			<form class="chat-form" method="POST" action="/">
-  				<div class="col-lg-6">
+  				<div class="form-container col-lg-6">
     					<div class="input-group">
       						<input type="text" name="input" class="form-control" placeholder="Ask me anything">
       						<span class="input-group-btn">
@@ -18,7 +19,16 @@
       						</span>
     					</div>
   				</div>
-			</form>	
+			</form>
+		</div>
+		<div class="output flex flex-column">
+			<div>
+				<c:forEach var="entry" items="${inputArray}">
+					<div class="entry">
+  						<c:out value="${entry}"/>
+					</div>
+				</c:forEach>
+			</div>	
 		</div>			
 	</div>
 </body>
