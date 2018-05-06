@@ -15,7 +15,6 @@ public class Servlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-      inputArray.clear();
       request.setAttribute("inputArray", inputArray);
       request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
@@ -24,10 +23,17 @@ public class Servlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
       String input = request.getParameter("input");
-      inputArray.add(input);
+      String lastInput = null;
+      if (!inputArray.isEmpty()) {
+        lastInput = inputArray.get(inputArray.size() - 1);
+        if (!input.equals(lastInput) && !inputArray.isEmpty()) {
+          inputArray.add(input);
+        }
+      } else if (inputArray.isEmpty()) {
+        inputArray.add(input);
+      } 
       request.setAttribute("inputArray", inputArray);
       request.getRequestDispatcher("/index.jsp").forward(request, response);
-      System.out.println(input);
     }
 
     @Override

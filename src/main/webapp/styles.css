@@ -12,12 +12,12 @@ body, html {
 }
 
 .entry {
-	font-size: 1.5vw;
+	font-size: 2vw;
 	margin-left: 20px;
 	padding: 2px;
+	font-family: 'Inconsolata', monospace;
 }
 
 .form-container {
 	width: 100%;
 }
-
