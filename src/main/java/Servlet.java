@@ -10,9 +10,19 @@ public class Servlet extends HttpServlet {
     private static final long serialVersionUID = -4751096228274971485L;
 
     @Override
-    protected void doGet(HttpServletRequest reqest, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        response.getWriter().println("Hello World!");
+//        response.getWriter().println("Hello World!");
+      request.getRequestDispatcher("/index.jsp").forward(request, response);
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+      String input = request.getParameter("input");
+      request.setAttribute("input", input);
+      request.getRequestDispatcher("/index.jsp").forward(request, response);
+      System.out.println(input);
     }
 
     @Override
