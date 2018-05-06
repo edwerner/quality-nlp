@@ -21,3 +21,11 @@ body, html {
 .form-container {
 	width: 100%;
 }
+
+.entry:nth-child(odd) {
+   background-color: #F0F8FF;
+}
+
+.form-container {
+	padding-right: 0px;
+}
