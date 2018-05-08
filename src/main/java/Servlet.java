@@ -35,8 +35,8 @@ public class Servlet extends HttpServlet {
     request.setAttribute("inputArray", inputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
     // detectSentence();
-    // trainModel();
-    detectSentence();
+     trainModel();
+//    detectSentence();
   }
 
   @Override
