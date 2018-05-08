@@ -21,6 +21,7 @@ import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.sentdetect.SentenceSample;
 import opennlp.tools.sentdetect.SentenceSampleStream;
+import opennlp.tools.tokenize.WhitespaceTokenizer;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.PlainTextByLineStream;
 import opennlp.tools.util.TrainingParameters;
@@ -29,14 +30,14 @@ public class Servlet extends HttpServlet {
 
   private static final long serialVersionUID = -4751096228274971485L;
   public List<String> inputArray;
+  String sentences[];
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     request.setAttribute("inputArray", inputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
-    // detectSentence();
-     trainModel();
-//    detectSentence();
+    // trainModel();
+    detectSentence();
   }
 
   @Override
@@ -51,8 +52,24 @@ public class Servlet extends HttpServlet {
     } else if (inputArray.isEmpty()) {
       inputArray.add(input);
     }
+    if (input != null) {
+      searchSentences(input);
+    }
     request.setAttribute("inputArray", inputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
+  };
+
+  public void searchSentences(String input) {
+    if (sentences != null) {
+      for (String s : sentences) {
+        String[] split = s.split(" ");
+        for (String word : split) {
+          if (word.equals(input)) {
+            System.out.println("MATCH: " + word);
+          }
+        }
+      }
+    }
   }
 
   @Override
@@ -83,28 +100,31 @@ public class Servlet extends HttpServlet {
     } finally {
       sampleStream.close();
     }
-    OutputStream modelOut = null;
-    File modelFile = new File("/quality-nlp/Model");
-    try {
-      modelOut = new BufferedOutputStream(new FileOutputStream(modelFile));
-      model.serialize(modelOut);
-    } finally {
-      if (modelOut != null)
-        modelOut.close();
-    }
+    // OutputStream modelOut = null;
+    // File modelFile = new File("C:\\Program Files\\Apache Software
+    // Foundation\\apache-opennlp-1.8.4\\models\\model.txt");
+    // try {
+    // modelOut = new BufferedOutputStream(new FileOutputStream(modelFile));
+    // model.serialize(modelOut);
+    // } finally {
+    // if (modelOut != null)
+    // modelOut.close();
+    // }
   }
 
   public void detectSentence() {
     InputStream modelIn = null;
     try {
-      modelIn = new FileInputStream("C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.bin");
+      modelIn = new FileInputStream(
+          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.bin");
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
     }
     try {
       SentenceModel model = new SentenceModel(modelIn);
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
-      File file = new File("C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train");
+      File file = new File(
+          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train");
 
       String line = null;
       String textLine = null;
@@ -113,7 +133,16 @@ public class Servlet extends HttpServlet {
       while ((line = bufferedReader.readLine()) != null) {
         textLine += line;
       }
-      String sentences[] = sentenceDetector.sentDetect(textLine);
+
+      sentences = sentenceDetector.sentDetect(textLine);
+
+      // WhitespaceTokenizer tokenizer = WhitespaceTokenizer.INSTANCE;
+      // for(String s : sentences) {
+      // String tokens[] = tokenizer.tokenize(s);
+      // for (String token : tokens) {
+      // System.out.println(token);
+      // }
+      // }
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
@@ -121,9 +150,9 @@ public class Servlet extends HttpServlet {
         try {
           modelIn.close();
         } catch (IOException e) {
+
         }
       }
-
     }
   }
 
