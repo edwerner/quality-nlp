@@ -1,4 +1,7 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -6,6 +9,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import opennlp.tools.sentdetect.SentenceDetectorME;
+import opennlp.tools.sentdetect.SentenceModel;
 
 public class Servlet extends HttpServlet {
 
@@ -17,6 +23,7 @@ public class Servlet extends HttpServlet {
             throws ServletException, IOException {
       request.setAttribute("inputArray", inputArray);
       request.getRequestDispatcher("/index.jsp").forward(request, response);
+      detectSentence();
     }
     
     @Override
@@ -45,6 +52,34 @@ public class Servlet extends HttpServlet {
     @Override
     public void destroy() {
         System.out.println("Servlet " + this.getServletName() + " has stopped");
+    }
+    
+    public void detectSentence() {
+      InputStream modelIn = null;
+      try {
+        modelIn = new FileInputStream("C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.bin");
+      } catch (FileNotFoundException e1) {
+        e1.printStackTrace();
+      }
+      try {
+        SentenceModel model = new SentenceModel(modelIn);
+        SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
+        String sentences[] = sentenceDetector.sentDetect("First sentence. Second sentence.");
+        System.out.println(sentences[0]);
+      }
+      catch (IOException e) {
+        e.printStackTrace();
+      }
+      finally {
+        if (modelIn != null) {
+          try {
+            modelIn.close();
+          }
+          catch (IOException e) {
+          }
+        }
+        
+      }
     }
 
 }
