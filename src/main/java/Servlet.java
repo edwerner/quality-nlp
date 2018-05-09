@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -45,6 +46,14 @@ public class Servlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String input = request.getParameter("input");
     String lastInput = null;
+    String output = null;
+    
+    if (input != null) {
+      output = searchSentences(input);
+      if (output != null) {
+        inputArray.add(output);
+      }
+    }
     if (!inputArray.isEmpty()) {
       lastInput = inputArray.get(inputArray.size() - 1);
       if (!input.equals(lastInput) && !inputArray.isEmpty()) {
@@ -53,14 +62,13 @@ public class Servlet extends HttpServlet {
     } else if (inputArray.isEmpty()) {
       inputArray.add(input);
     }
-    if (input != null) {
-      searchSentences(input);
-    }
-    request.setAttribute("inputArray", inputArray);
+    List<?> shallowCopy = inputArray.subList(0, inputArray.size());
+    Collections.reverse(shallowCopy);
+    request.setAttribute("inputArray", shallowCopy);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   };
 
-  public void searchSentences(String input) {
+  public String searchSentences(String input) {
     List<String> sentenceList;
     if (sentences != null) {
       for (String sentence : sentences) {
@@ -68,10 +76,11 @@ public class Servlet extends HttpServlet {
         sentenceList = Arrays.asList(split);
         if (sentenceList.contains(input)) {
           System.out.println(sentence);
-          break;
+          return sentence;
         }
       }
     }
+    return null;
   }
 
   @Override

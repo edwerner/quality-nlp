@@ -9,6 +9,7 @@ body, html {
 .output {
 	width: 100%;
 	margin-top: 20px;
+	overflow:scroll;
 }
 
 .entry {
@@ -28,4 +29,8 @@ body, html {
 
 .form-container {
 	padding-right: 0px;
+}
+
+.content {
+	height: 50%;
 }
