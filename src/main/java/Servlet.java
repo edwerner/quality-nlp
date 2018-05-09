@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -60,13 +61,14 @@ public class Servlet extends HttpServlet {
   };
 
   public void searchSentences(String input) {
+    List<String> sentenceList;
     if (sentences != null) {
-      for (String s : sentences) {
-        String[] split = s.split(" ");
-        for (String word : split) {
-          if (word.equals(input)) {
-            System.out.println("MATCH: " + word);
-          }
+      for (String sentence : sentences) {
+        String[] split = sentence.split(" ");
+        sentenceList = Arrays.asList(split);
+        if (sentenceList.contains(input)) {
+          System.out.println(sentence);
+          break;
         }
       }
     }
