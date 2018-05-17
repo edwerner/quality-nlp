@@ -36,7 +36,7 @@ public class Servlet extends HttpServlet {
   public List<String> outputArray;
   private ArrayList<String> duplicateList;
   private String[] sentences;
-  private final String TRAINING_DATA = "C:\\\\Program Files\\\\Apache Software Foundation\\\\apache-opennlp-1.8.4\\\\models\\\\en-sent.train";
+  private final String TRAINING_DATA = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train";
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -54,20 +54,7 @@ public class Servlet extends HttpServlet {
       inputArray.add(input);
       inputArray.add(searchSentences(input));
     }
-    if (!inputArray.isEmpty()) {
-      lastInput = inputArray.get(inputArray.size() - 1);
-      if (!input.equals(lastInput) 
-          && !inputArray.isEmpty()
-          && !inputArray.contains(input)) {
-        inputArray.add(input);
-      }
-    } else if (inputArray.isEmpty()) {
-      inputArray.add(input);
-    }
-//    List<?> shallowCopy = inputArray.subList(0, inputArray.size());
-//    Collections.reverse(shallowCopy);
     request.setAttribute("inputArray", inputArray);
-    request.setAttribute("outputArray", outputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   };
 
@@ -78,14 +65,8 @@ public class Servlet extends HttpServlet {
         if (!duplicateList.contains(sentence)) {
           String[] split = sentence.split(" ");
           sentenceList = Arrays.asList(split);
-          for (String s : split) {
-            if (s.equals(input)) {  
-              s.replace(s,"<b>" + input + "</b>");
-            }
-          }
-          duplicateList.add(sentence);
           if (sentenceList.contains(input)) {
-            System.out.println(sentence);
+            duplicateList.add(sentence);
             return sentence;
           }
         }
