@@ -34,6 +34,7 @@ public class Servlet extends HttpServlet {
   private static final long serialVersionUID = -4751096228274971485L;
   public List<String> inputArray;
   public List<String> outputArray;
+  private ArrayList<String> duplicateList;
   private String[] sentences;
   private final String TRAINING_DATA = "C:\\\\Program Files\\\\Apache Software Foundation\\\\apache-opennlp-1.8.4\\\\models\\\\en-sent.train";
 
@@ -49,11 +50,15 @@ public class Servlet extends HttpServlet {
     String input = request.getParameter("input");
     String lastInput = null;
     String output = null;
-    List<String> outputArray = new ArrayList<String>();
     
     if (input != null) {
       output = searchSentences(input);
-      outputArray.add(output);
+      if (!inputArray.contains(output)) {
+        inputArray.add(output);
+      } else {
+        output = searchSentences(input);
+        inputArray.add(output);
+      }
     }
     if (!inputArray.isEmpty()) {
       lastInput = inputArray.get(inputArray.size() - 1);
@@ -74,20 +79,21 @@ public class Servlet extends HttpServlet {
 
   public String searchSentences(String input) {
     List<String> sentenceList;
-//    String replaceString;
     if (sentences != null) {
       for (String sentence : sentences) {
-        String[] split = sentence.split(" ");
-        sentenceList = Arrays.asList(split);
-        for (String s : split) {
-          if (s.equals(input)) {  
-            s.replace(s,"<b>" + input + "</b>");  
-//            System.out.println(replaceString);
+        if (!duplicateList.contains(sentence)) {
+          String[] split = sentence.split(" ");
+          sentenceList = Arrays.asList(split);
+          for (String s : split) {
+            if (s.equals(input)) {  
+              s.replace(s,"<b>" + input + "</b>");  
+            }
           }
-        }
-        if (sentenceList.contains(input)) {
-          System.out.println(sentence);
-          return sentence;
+          duplicateList.add(sentence);
+          if (sentenceList.contains(input)) {
+            System.out.println(sentence);
+            return sentence;
+          }
         }
       }
     }
@@ -97,6 +103,7 @@ public class Servlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     inputArray = new ArrayList<String>();
+    duplicateList = new ArrayList<String>();
     detectSentence();
     System.out.println("Servlet " + this.getServletName() + " has started");
   }
