@@ -30,6 +30,11 @@
 						<c:out value="${entry}"/>
 					</div>
 				</c:forEach>
+				<c:forEach var="entry" items="${outputArray}">
+					<div class="entry">
+						<c:out value="${entry}"/>
+					</div>
+				</c:forEach>
 			</div>	
 		</div>			
 	</div>

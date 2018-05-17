@@ -26,20 +26,22 @@ import opennlp.tools.sentdetect.SentenceSampleStream;
 import opennlp.tools.tokenize.WhitespaceTokenizer;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.PlainTextByLineStream;
+import opennlp.tools.util.Span;
 import opennlp.tools.util.TrainingParameters;
 
 public class Servlet extends HttpServlet {
 
   private static final long serialVersionUID = -4751096228274971485L;
   public List<String> inputArray;
-  String sentences[];
+  public List<String> outputArray;
+  private String[] sentences;
+  private final String TRAINING_DATA = "C:\\\\Program Files\\\\Apache Software Foundation\\\\apache-opennlp-1.8.4\\\\models\\\\en-sent.train";
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     request.setAttribute("inputArray", inputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
     // trainModel();
-    detectSentence();
   }
 
   @Override
@@ -47,33 +49,42 @@ public class Servlet extends HttpServlet {
     String input = request.getParameter("input");
     String lastInput = null;
     String output = null;
+    List<String> outputArray = new ArrayList<String>();
     
     if (input != null) {
       output = searchSentences(input);
-      if (output != null) {
-        inputArray.add(output);
-      }
+      outputArray.add(output);
     }
     if (!inputArray.isEmpty()) {
       lastInput = inputArray.get(inputArray.size() - 1);
-      if (!input.equals(lastInput) && !inputArray.isEmpty()) {
+      if (!input.equals(lastInput) 
+          && !inputArray.isEmpty()
+          && !inputArray.contains(input)) {
         inputArray.add(input);
       }
     } else if (inputArray.isEmpty()) {
       inputArray.add(input);
     }
-    List<?> shallowCopy = inputArray.subList(0, inputArray.size());
-    Collections.reverse(shallowCopy);
-    request.setAttribute("inputArray", shallowCopy);
+//    List<?> shallowCopy = inputArray.subList(0, inputArray.size());
+//    Collections.reverse(shallowCopy);
+    request.setAttribute("inputArray", inputArray);
+    request.setAttribute("outputArray", outputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   };
 
   public String searchSentences(String input) {
     List<String> sentenceList;
+//    String replaceString;
     if (sentences != null) {
       for (String sentence : sentences) {
         String[] split = sentence.split(" ");
         sentenceList = Arrays.asList(split);
+        for (String s : split) {
+          if (s.equals(input)) {  
+            s.replace(s,"<b>" + input + "</b>");  
+//            System.out.println(replaceString);
+          }
+        }
         if (sentenceList.contains(input)) {
           System.out.println(sentence);
           return sentence;
@@ -86,6 +97,7 @@ public class Servlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     inputArray = new ArrayList<String>();
+    detectSentence();
     System.out.println("Servlet " + this.getServletName() + " has started");
   }
 
@@ -122,6 +134,20 @@ public class Servlet extends HttpServlet {
     // modelOut.close();
     // }
   }
+  
+  public String readFileToString(String pathToFile) throws Exception{
+    StringBuilder strFile = new StringBuilder();
+    BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
+    char[] buffer = new char[512];
+    int num = 0;
+    while((num = reader.read(buffer)) != -1){
+        String current = String.valueOf(buffer, 0, num);
+        strFile.append(current);
+        buffer = new char[512];
+    }
+    reader.close();
+    return strFile.toString();
+}
 
   public void detectSentence() {
     InputStream modelIn = null;
@@ -134,19 +160,24 @@ public class Servlet extends HttpServlet {
     try {
       SentenceModel model = new SentenceModel(modelIn);
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
-      File file = new File(
-          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train");
+//      File file = new File(
+//          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train");
 
-      String line = null;
-      String textLine = null;
-      FileReader fileReader = new FileReader(file);
-      BufferedReader bufferedReader = new BufferedReader(fileReader);
-      while ((line = bufferedReader.readLine()) != null) {
-        textLine += line;
+//      String line = null;
+//      String textLine = null;
+//      FileReader fileReader = new FileReader(file);
+//      BufferedReader bufferedReader = new BufferedReader(fileReader);
+//      while ((line = bufferedReader.readLine()) != null) {
+//        textLine += line;
+//      }
+
+      try {
+        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-
-      sentences = sentenceDetector.sentDetect(textLine);
-
+//      sentences = sentenceDetector.sentPosDetect( "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train");
+      
       // WhitespaceTokenizer tokenizer = WhitespaceTokenizer.INSTANCE;
       // for(String s : sentences) {
       // String tokens[] = tokenizer.tokenize(s);
