@@ -49,16 +49,10 @@ public class Servlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String input = request.getParameter("input");
     String lastInput = null;
-    String output = null;
-    
+   
     if (input != null) {
-      output = searchSentences(input);
-      if (!inputArray.contains(output)) {
-        inputArray.add(output);
-      } else {
-        output = searchSentences(input);
-        inputArray.add(output);
-      }
+      inputArray.add(input);
+      inputArray.add(searchSentences(input));
     }
     if (!inputArray.isEmpty()) {
       lastInput = inputArray.get(inputArray.size() - 1);
@@ -86,7 +80,7 @@ public class Servlet extends HttpServlet {
           sentenceList = Arrays.asList(split);
           for (String s : split) {
             if (s.equals(input)) {  
-              s.replace(s,"<b>" + input + "</b>");  
+              s.replace(s,"<b>" + input + "</b>");
             }
           }
           duplicateList.add(sentence);
@@ -130,16 +124,6 @@ public class Servlet extends HttpServlet {
     } finally {
       sampleStream.close();
     }
-    // OutputStream modelOut = null;
-    // File modelFile = new File("C:\\Program Files\\Apache Software
-    // Foundation\\apache-opennlp-1.8.4\\models\\model.txt");
-    // try {
-    // modelOut = new BufferedOutputStream(new FileOutputStream(modelFile));
-    // model.serialize(modelOut);
-    // } finally {
-    // if (modelOut != null)
-    // modelOut.close();
-    // }
   }
   
   public String readFileToString(String pathToFile) throws Exception{
@@ -167,23 +151,13 @@ public class Servlet extends HttpServlet {
     try {
       SentenceModel model = new SentenceModel(modelIn);
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
-//      File file = new File(
-//          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train");
-
-//      String line = null;
-//      String textLine = null;
-//      FileReader fileReader = new FileReader(file);
-//      BufferedReader bufferedReader = new BufferedReader(fileReader);
-//      while ((line = bufferedReader.readLine()) != null) {
-//        textLine += line;
-//      }
 
       try {
         sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
       } catch (Exception e) {
         e.printStackTrace();
       }
-//      sentences = sentenceDetector.sentPosDetect( "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train");
+      // sentences = sentenceDetector.sentPosDetect( "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train");
       
       // WhitespaceTokenizer tokenizer = WhitespaceTokenizer.INSTANCE;
       // for(String s : sentences) {
