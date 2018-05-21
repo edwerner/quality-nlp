@@ -43,6 +43,8 @@ public class Servlet extends HttpServlet {
   private final String TRAINING_DATA = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train";
   private final String TOKENIZER =  "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-token.bin";
   private final String PERSONIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-ner-person.bin";
+  private TokenizerME tokenizer;
+  private NameFinderME nameFinder;
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -69,6 +71,20 @@ public class Servlet extends HttpServlet {
     if (sentences != null) {
       for (String sentence : sentences) {
         if (!duplicateList.contains(sentence)) {
+
+          String[] tokens = tokenizer.tokenize(sentence);
+          
+          //Finding the names in the sentence 
+          Span nameSpans[] = nameFinder.find(tokens);
+          
+//          double[] probs = tokenizer.getTokenProbabilities();
+          for (Span token : nameSpans) {
+            System.out.println(token + " " + sentence);
+//           for(int i = 0; i < probs.length; i++) {
+//             System.out.println(probs[i]);
+//           }
+          }
+          
           String[] split = sentence.split(" ");
           sentenceList = Arrays.asList(split);
           if (sentenceList.contains(input)) {
@@ -146,27 +162,27 @@ public class Servlet extends HttpServlet {
         InputStream personInputStream = new FileInputStream(PERSONIZER);
         TokenizerModel tokenModel = new TokenizerModel(tokenInputStream);
             
-        TokenizerME tokenizer = new TokenizerME(tokenModel);
+        tokenizer = new TokenizerME(tokenModel);
         TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(personInputStream);
         
         //Instantiating the NameFinder class 
-        NameFinderME nameFinder = new NameFinderME(tokenNameFinderModel); 
+        nameFinder = new NameFinderME(tokenNameFinderModel); 
         
 
-        for (String s : sentences) {
-          String[] tokens = tokenizer.tokenize(s);
-          
-          //Finding the names in the sentence 
-          Span nameSpans[] = nameFinder.find(tokens);
-          
-//          double[] probs = tokenizer.getTokenProbabilities();
-          for (Span token : nameSpans) {
-            System.out.println(token);
-//           for(int i = 0; i < probs.length; i++) {
-//             System.out.println(probs[i]);
-//           }
-          }
-        }
+//        for (String s : sentences) {
+//          String[] tokens = tokenizer.tokenize(s);
+//          
+//          //Finding the names in the sentence 
+//          Span nameSpans[] = nameFinder.find(tokens);
+//          
+////          double[] probs = tokenizer.getTokenProbabilities();
+//          for (Span token : nameSpans) {
+//            System.out.println(token + " " + s);
+////           for(int i = 0; i < probs.length; i++) {
+////             System.out.println(probs[i]);
+////           }
+//          }
+//        }
       } catch (Exception e) {
         e.printStackTrace();
       } finally {
@@ -179,7 +195,7 @@ public class Servlet extends HttpServlet {
         try {
           modelIn.close();
         } catch (IOException e) {
-
+          e.printStackTrace();
         }
       }
     }
