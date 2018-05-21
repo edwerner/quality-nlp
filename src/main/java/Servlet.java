@@ -19,10 +19,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.sentdetect.SentenceSample;
 import opennlp.tools.sentdetect.SentenceSampleStream;
+import opennlp.tools.tokenize.TokenizerME;
+import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.tokenize.WhitespaceTokenizer;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.PlainTextByLineStream;
@@ -37,6 +41,8 @@ public class Servlet extends HttpServlet {
   private ArrayList<String> duplicateList;
   private String[] sentences;
   private final String TRAINING_DATA = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train";
+  private final String TOKENIZER =  "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-token.bin";
+  private final String PERSONIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-ner-person.bin";
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -49,7 +55,7 @@ public class Servlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String input = request.getParameter("input");
     String lastInput = null;
-   
+
     if (input != null) {
       inputArray.add(input);
       inputArray.add(searchSentences(input));
@@ -106,20 +112,20 @@ public class Servlet extends HttpServlet {
       sampleStream.close();
     }
   }
-  
-  public String readFileToString(String pathToFile) throws Exception{
+
+  public String readFileToString(String pathToFile) throws Exception {
     StringBuilder strFile = new StringBuilder();
     BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
     char[] buffer = new char[512];
     int num = 0;
-    while((num = reader.read(buffer)) != -1){
-        String current = String.valueOf(buffer, 0, num);
-        strFile.append(current);
-        buffer = new char[512];
+    while ((num = reader.read(buffer)) != -1) {
+      String current = String.valueOf(buffer, 0, num);
+      strFile.append(current);
+      buffer = new char[512];
     }
     reader.close();
     return strFile.toString();
-}
+  }
 
   public void detectSentence() {
     InputStream modelIn = null;
@@ -135,18 +141,37 @@ public class Servlet extends HttpServlet {
 
       try {
         sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
+        
+        InputStream tokenInputStream = new FileInputStream(TOKENIZER); 
+        InputStream personInputStream = new FileInputStream(PERSONIZER);
+        TokenizerModel tokenModel = new TokenizerModel(tokenInputStream);
+            
+        TokenizerME tokenizer = new TokenizerME(tokenModel);
+        TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(personInputStream);
+        
+        //Instantiating the NameFinder class 
+        NameFinderME nameFinder = new NameFinderME(tokenNameFinderModel); 
+        
+
+        for (String s : sentences) {
+          String[] tokens = tokenizer.tokenize(s);
+          
+          //Finding the names in the sentence 
+          Span nameSpans[] = nameFinder.find(tokens);
+          
+//          double[] probs = tokenizer.getTokenProbabilities();
+          for (Span token : nameSpans) {
+            System.out.println(token);
+//           for(int i = 0; i < probs.length; i++) {
+//             System.out.println(probs[i]);
+//           }
+          }
+        }
       } catch (Exception e) {
         e.printStackTrace();
+      } finally {
+        
       }
-      // sentences = sentenceDetector.sentPosDetect( "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train");
-      
-      // WhitespaceTokenizer tokenizer = WhitespaceTokenizer.INSTANCE;
-      // for(String s : sentences) {
-      // String tokens[] = tokenizer.tokenize(s);
-      // for (String token : tokens) {
-      // System.out.println(token);
-      // }
-      // }
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
