@@ -19,8 +19,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import opennlp.tools.chunker.ChunkerME;
+import opennlp.tools.chunker.ChunkerModel;
+import opennlp.tools.cmdline.postag.POSModelLoader;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
+import opennlp.tools.postag.POSModel;
+import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.sentdetect.SentenceSample;
@@ -28,6 +33,7 @@ import opennlp.tools.sentdetect.SentenceSampleStream;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.tokenize.WhitespaceTokenizer;
+import opennlp.tools.util.InvalidFormatException;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.PlainTextByLineStream;
 import opennlp.tools.util.Span;
@@ -43,6 +49,8 @@ public class Servlet extends HttpServlet {
   private final String TRAINING_DATA = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train";
   private final String TOKENIZER =  "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-token.bin";
   private final String PERSONIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-ner-person.bin";
+  private final String SPEECH_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-pos-maxent.bin";
+  private final String CHUNKER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-chunker.bin";
   private TokenizerME tokenizer;
   private NameFinderME nameFinder;
 
@@ -58,7 +66,7 @@ public class Servlet extends HttpServlet {
     String input = request.getParameter("input");
     String lastInput = null;
 
-    if (input != null) {
+    if (input != null && searchSentences(input) != null) {
       inputArray.add(input);
       inputArray.add(searchSentences(input));
     }
@@ -71,23 +79,56 @@ public class Servlet extends HttpServlet {
     if (sentences != null) {
       for (String sentence : sentences) {
         if (!duplicateList.contains(sentence)) {
-
-          String[] tokens = tokenizer.tokenize(sentence);
-          
-          //Finding the names in the sentence 
-          Span nameSpans[] = nameFinder.find(tokens);
-          
-//          double[] probs = tokenizer.getTokenProbabilities();
-          for (Span token : nameSpans) {
-            System.out.println(token + " " + sentence);
-//           for(int i = 0; i < probs.length; i++) {
-//             System.out.println(probs[i]);
-//           }
-          }
           
           String[] split = sentence.split(" ");
           sentenceList = Arrays.asList(split);
           if (sentenceList.contains(input)) {
+       
+            WhitespaceTokenizer whitespaceTokenizer= WhitespaceTokenizer.INSTANCE; 
+            String[] tokens = whitespaceTokenizer.tokenize(sentence);
+            
+            //Generating the POS tags 
+            //Load the parts of speech model 
+            File file = new File(SPEECH_MODEL);
+            POSModel posModel = new POSModelLoader().load(file);
+            
+            //Constructing the tagger 
+            POSTaggerME tagger = new POSTaggerME(posModel);        
+            
+            //Generating tags from the tokens 
+            String[] tags = tagger.tag(tokens);
+            
+          //Loading the chunker model 
+            InputStream inputStream = null;
+            try {
+              inputStream = new FileInputStream(CHUNKER);
+            } catch (FileNotFoundException e) {
+              e.printStackTrace();
+            } 
+            ChunkerModel chunkerModel = null;
+            try {
+              chunkerModel = new ChunkerModel(inputStream);
+            } catch (InvalidFormatException e) {
+              e.printStackTrace();
+            } catch (IOException e) {
+              e.printStackTrace();
+            }  
+            
+            //Instantiate the ChunkerME class 
+            ChunkerME chunkerME = new ChunkerME(chunkerModel);
+             
+            //Generating the chunks 
+            String result[] = chunkerME.chunk(tokens, tags); 
+        
+            for (String s : result) {
+              System.out.println(s);
+            }
+//            String[] tokens = tokenizer.tokenize(input);
+//            
+//            //Finding the names in the sentence 
+//            Span nameSpans[] = nameFinder.find(tokens);
+//            System.out.println(nameSpans.length);
+            
             duplicateList.add(sentence);
             return sentence;
           }
@@ -159,30 +200,17 @@ public class Servlet extends HttpServlet {
         sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
         
         InputStream tokenInputStream = new FileInputStream(TOKENIZER); 
-        InputStream personInputStream = new FileInputStream(PERSONIZER);
+//        InputStream personInputStream = new FileInputStream(PERSONIZER);
         TokenizerModel tokenModel = new TokenizerModel(tokenInputStream);
             
         tokenizer = new TokenizerME(tokenModel);
-        TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(personInputStream);
+//        TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(personInputStream);
         
         //Instantiating the NameFinder class 
-        nameFinder = new NameFinderME(tokenNameFinderModel); 
+//        nameFinder = new NameFinderME(tokenNameFinderModel); 
         
-
-//        for (String s : sentences) {
-//          String[] tokens = tokenizer.tokenize(s);
-//          
-//          //Finding the names in the sentence 
-//          Span nameSpans[] = nameFinder.find(tokens);
-//          
-////          double[] probs = tokenizer.getTokenProbabilities();
-//          for (Span token : nameSpans) {
-//            System.out.println(token + " " + s);
-////           for(int i = 0; i < probs.length; i++) {
-////             System.out.println(probs[i]);
-////           }
-//          }
-//        }
+       
+        
       } catch (Exception e) {
         e.printStackTrace();
       } finally {
