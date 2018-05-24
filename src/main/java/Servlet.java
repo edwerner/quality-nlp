@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.cmdline.postag.POSModelLoader;
+import opennlp.tools.doccat.DoccatModel;
+import opennlp.tools.doccat.DocumentCategorizer;
+import opennlp.tools.doccat.DocumentCategorizerME;
+import opennlp.tools.doccat.DocumentSample;
+import opennlp.tools.doccat.DocumentSampleStream;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.postag.POSModel;
@@ -98,6 +104,24 @@ public class Servlet extends HttpServlet {
             //Generating tags from the tokens 
             String[] tags = tagger.tag(tokens);
             
+            
+            
+       
+
+            Span nameSpans[] = nameFinder.find(split);
+            
+            for(Span s: nameSpans){
+              System.out.print(s.toString());
+              System.out.print("  :  ");
+              for(int index = s.getStart(); index < s.getEnd(); index++) {
+                  System.out.print(split[index] + " ");
+              }
+              
+              
+              
+              
+              
+            
           //Loading the chunker model 
             InputStream inputStream = null;
             try {
@@ -118,16 +142,43 @@ public class Servlet extends HttpServlet {
             ChunkerME chunkerME = new ChunkerME(chunkerModel);
              
             //Generating the chunks 
-            String result[] = chunkerME.chunk(tokens, tags); 
+//            String result[] = chunkerME.chunk(tokens, tags);
+//            String question = "";
+//            for(int i=0;i< result.length;i++) {
+//              if (tags[i].equals("WP")) {
+//                System.out.println("WHO TAG");
+//              }
+//              System.out.println(tokens[i] + " - " + tags[i] + " - " + result[i]); 
+//            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //Generating the tagged chunk spans 
+//            Span[] span = chunkerME.chunkAsSpans(tokens, tags); 
+//             
+//            for (Span s : span) {
+//              System.out.println(s.toString());
+//            }
         
-            for (String s : result) {
-              System.out.println(s);
-            }
+//            for (String s : result) {
+//              System.out.println(s);
+//            }
 //            String[] tokens = tokenizer.tokenize(input);
 //            
 //            //Finding the names in the sentence 
-//            Span nameSpans[] = nameFinder.find(tokens);
-//            System.out.println(nameSpans.length);
+              System.out.println();
+          }
             
             duplicateList.add(sentence);
             return sentence;
@@ -151,24 +202,24 @@ public class Servlet extends HttpServlet {
     System.out.println("Servlet " + this.getServletName() + " has stopped");
   }
 
-  @SuppressWarnings("deprecation")
-  public void trainModel() throws IOException {
-    Charset charset = Charset.forName("UTF-8");
-    ObjectStream<String> lineStream = null;
-    try {
-      lineStream = new PlainTextByLineStream(new FileInputStream(
-          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train"), charset);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-    ObjectStream<SentenceSample> sampleStream = new SentenceSampleStream(lineStream);
-    SentenceModel model;
-    try {
-      model = SentenceDetectorME.train("en", sampleStream, true, null, TrainingParameters.defaultParams());
-    } finally {
-      sampleStream.close();
-    }
-  }
+//  @SuppressWarnings("deprecation")
+//  public void trainModel() throws IOException {
+//    Charset charset = Charset.forName("UTF-8");
+//    ObjectStream<String> lineStream = null;
+//    try {
+//      lineStream = new PlainTextByLineStream(new FileInputStream(
+//          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train"), charset);
+//    } catch (FileNotFoundException e) {
+//      e.printStackTrace();
+//    }
+//    ObjectStream<SentenceSample> sampleStream = new SentenceSampleStream(lineStream);
+//    SentenceModel model;
+//    try {
+//      model = SentenceDetectorME.train("en", sampleStream, true, null, TrainingParameters.defaultParams());
+//    } finally {
+//      sampleStream.close();
+//    }
+//  }
 
   public String readFileToString(String pathToFile) throws Exception {
     StringBuilder strFile = new StringBuilder();
@@ -184,11 +235,69 @@ public class Servlet extends HttpServlet {
     return strFile.toString();
   }
 
+  @SuppressWarnings("deprecation")
   public void detectSentence() {
     InputStream modelIn = null;
+    DoccatModel model1 = null;
+    InputStream dataIn = null;
+    
     try {
       modelIn = new FileInputStream(
           "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.bin");
+      
+      
+      
+      System.out.println("******Train Data Start********");
+      dataIn = new FileInputStream(TRAINING_DATA);
+      ObjectStream<String> lineStream = null;
+      try {
+        lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      ObjectStream<DocumentSample> sampleStream = new DocumentSampleStream(lineStream);
+
+      // Training a maxent model by default!!!
+      try {
+        model1 = DocumentCategorizerME.train("en", sampleStream);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+      
+      // save the model to local
+      BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream("naive-bayes.bin"));
+      try {
+        model1.serialize(modelOut);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      System.out.println("\nTrained Model is saved locally at : "+"model" + File.separator + "en-movie-classifier-naive-bayes.bin");
+
+      // test the model file by subjecting it to prediction
+      DocumentCategorizer doccat = new DocumentCategorizerME(model1);
+      String[] docWords = "Alice followed the White Rabbit".replaceAll("[^A-Za-z]", " ").split(" ");
+      double[] aProbs = doccat.categorize(docWords);
+
+      // print the probabilities of the categories
+      System.out.println("\n---------------------------------\nCategory : Probability\n---------------------------------");
+      for(int i = 0; i < doccat.getNumberOfCategories(); i++){
+          System.out.println(doccat.getCategory(i) + " : " + aProbs[i]);
+      }
+      System.out.println("---------------------------------");
+
+      System.out.println("\n" + doccat.getBestCategory(aProbs) + " : is the predicted category for the given sentence.");
+      
+      
+
+      System.out.println("******Train Data End********");
+      
+      
+      
+      
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
     }
@@ -197,19 +306,20 @@ public class Servlet extends HttpServlet {
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
 
       try {
-        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
-        
-        InputStream tokenInputStream = new FileInputStream(TOKENIZER); 
+//        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
+//        
+//        InputStream tokenInputStream = new FileInputStream(TOKENIZER); 
 //        InputStream personInputStream = new FileInputStream(PERSONIZER);
-        TokenizerModel tokenModel = new TokenizerModel(tokenInputStream);
-            
-        tokenizer = new TokenizerME(tokenModel);
+//        TokenizerModel tokenModel = new TokenizerModel(tokenInputStream);
+//            
+//        tokenizer = new TokenizerME(tokenModel);
 //        TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(personInputStream);
-        
-        //Instantiating the NameFinder class 
+//        
+//        //Instantiating the NameFinder class 
 //        nameFinder = new NameFinderME(tokenNameFinderModel); 
         
-       
+        
+        
         
       } catch (Exception e) {
         e.printStackTrace();

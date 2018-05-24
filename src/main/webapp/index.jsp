@@ -14,12 +14,12 @@
 		<div class="content flex flex-row flex-center">
 			<form class="chat-form" method="POST" action="/">
   				<div class="form-container col-lg-6">
-    					<div class="input-group">
-      						<input type="text" name="input" class="form-control" placeholder="Ask me anything">
-      						<span class="input-group-btn">
-        						<button type="submit" value="submit" class="btn btn-primary">Submit</button>
-      						</span>
-    					</div>
+    				<div class="input-group">
+      					<input type="text" name="input" class="form-control" placeholder="Ask me a question about Alice">
+      					<span class="input-group-btn">
+        				<button type="submit" value="submit" class="btn btn-primary">Submit</button>
+      					</span>
+    				</div>
   				</div>
 			</form>
 		</div>
