@@ -202,24 +202,24 @@ public class Servlet extends HttpServlet {
     System.out.println("Servlet " + this.getServletName() + " has stopped");
   }
 
-//  @SuppressWarnings("deprecation")
-//  public void trainModel() throws IOException {
-//    Charset charset = Charset.forName("UTF-8");
-//    ObjectStream<String> lineStream = null;
-//    try {
-//      lineStream = new PlainTextByLineStream(new FileInputStream(
-//          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train"), charset);
-//    } catch (FileNotFoundException e) {
-//      e.printStackTrace();
-//    }
-//    ObjectStream<SentenceSample> sampleStream = new SentenceSampleStream(lineStream);
-//    SentenceModel model;
-//    try {
-//      model = SentenceDetectorME.train("en", sampleStream, true, null, TrainingParameters.defaultParams());
-//    } finally {
-//      sampleStream.close();
-//    }
-//  }
+  @SuppressWarnings("deprecation")
+  public void trainModel() throws IOException {
+    Charset charset = Charset.forName("UTF-8");
+    ObjectStream<String> lineStream = null;
+    try {
+      lineStream = new PlainTextByLineStream(new FileInputStream(
+          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train"), charset);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    ObjectStream<SentenceSample> sampleStream = new SentenceSampleStream(lineStream);
+    SentenceModel model;
+    try {
+      model = SentenceDetectorME.train("en", sampleStream, true, null, TrainingParameters.defaultParams());
+    } finally {
+      sampleStream.close();
+    }
+  }
 
   public String readFileToString(String pathToFile) throws Exception {
     StringBuilder strFile = new StringBuilder();
@@ -238,15 +238,15 @@ public class Servlet extends HttpServlet {
   @SuppressWarnings("deprecation")
   public void detectSentence() {
     InputStream modelIn = null;
+    
     DoccatModel model1 = null;
     InputStream dataIn = null;
+    
     
     try {
       modelIn = new FileInputStream(
           "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.bin");
-      
-      
-      
+
       System.out.println("******Train Data Start********");
       dataIn = new FileInputStream(TRAINING_DATA);
       ObjectStream<String> lineStream = null;
@@ -265,8 +265,7 @@ public class Servlet extends HttpServlet {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      
-      
+
       // save the model to local
       BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream("naive-bayes.bin"));
       try {
@@ -275,7 +274,6 @@ public class Servlet extends HttpServlet {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      System.out.println("\nTrained Model is saved locally at : "+"model" + File.separator + "en-movie-classifier-naive-bayes.bin");
 
       // test the model file by subjecting it to prediction
       DocumentCategorizer doccat = new DocumentCategorizerME(model1);
@@ -283,21 +281,25 @@ public class Servlet extends HttpServlet {
       double[] aProbs = doccat.categorize(docWords);
 
       // print the probabilities of the categories
-      System.out.println("\n---------------------------------\nCategory : Probability\n---------------------------------");
-      for(int i = 0; i < doccat.getNumberOfCategories(); i++){
-          System.out.println(doccat.getCategory(i) + " : " + aProbs[i]);
+      System.out
+          .println("\n---------------------------------\nCategory : Probability\n---------------------------------");
+      for (int i = 0; i < doccat.getNumberOfCategories(); i++) {
+        System.out.println(doccat.getCategory(i) + " : " + aProbs[i]);
       }
       System.out.println("---------------------------------");
 
-      System.out.println("\n" + doccat.getBestCategory(aProbs) + " : is the predicted category for the given sentence.");
-      
-      
+      System.out
+          .println("\n" + doccat.getBestCategory(aProbs) + " : is the predicted category for the given sentence.");
 
       System.out.println("******Train Data End********");
-      
-      
-      
-      
+
+    } catch (FileNotFoundException e1) {
+      e1.printStackTrace();
+    }
+    
+    try {
+      modelIn = new FileInputStream(
+          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.bin");
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
     }
@@ -306,20 +308,19 @@ public class Servlet extends HttpServlet {
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
 
       try {
-//        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
-//        
-//        InputStream tokenInputStream = new FileInputStream(TOKENIZER); 
-//        InputStream personInputStream = new FileInputStream(PERSONIZER);
-//        TokenizerModel tokenModel = new TokenizerModel(tokenInputStream);
-//            
-//        tokenizer = new TokenizerME(tokenModel);
-//        TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(personInputStream);
-//        
-//        //Instantiating the NameFinder class 
-//        nameFinder = new NameFinderME(tokenNameFinderModel); 
+        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
         
+        InputStream tokenInputStream = new FileInputStream(TOKENIZER); 
+        InputStream personInputStream = new FileInputStream(PERSONIZER);
+        TokenizerModel tokenModel = new TokenizerModel(tokenInputStream);
+            
+        tokenizer = new TokenizerME(tokenModel);
+        TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(personInputStream);
         
+        //Instantiating the NameFinder class 
+        nameFinder = new NameFinderME(tokenNameFinderModel); 
         
+       
         
       } catch (Exception e) {
         e.printStackTrace();
@@ -338,5 +339,4 @@ public class Servlet extends HttpServlet {
       }
     }
   }
-
 }
