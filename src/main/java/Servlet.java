@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -62,6 +63,7 @@ public class Servlet extends HttpServlet {
   private NameFinderME nameFinder;
   private DoccatModel model1;
   private DocumentCategorizerME inputCategorizer;
+  private int randomNumber;
 
   @Override
   public void init() throws ServletException {
@@ -69,6 +71,7 @@ public class Servlet extends HttpServlet {
     duplicateList = new ArrayList<String>();
     trainModel();
     detectSentence();
+    randomNumber = getRandomNumber();
     System.out.println("Servlet " + this.getServletName() + " has started");
   }
 
@@ -133,10 +136,14 @@ public class Servlet extends HttpServlet {
     if (sentences != null) {
       for (String sentence : sentences) {
         if (!duplicateList.contains(sentence)) {
-          String[] split = sentence.split(" ");
+          String[] split = sentence.split("\\s+");
+          
           sentenceList = Arrays.asList(split);
-          System.out.println("String: " + split[0]);
-          System.out.println("Double: " + split[1]);
+          System.out.println("String: " + sentence);
+          System.out.println("0: " + split[0]);
+          System.out.println("1: " + split[1]);
+          System.out.println("2: " + split[2]);
+          System.out.println("3: " + split[3]);
 //          if (sentenceList.contains(input)) {
             
 
@@ -219,19 +226,25 @@ public class Servlet extends HttpServlet {
     }
     return null;
   }
+  
+  private int getRandomNumber() {
+    Random rand = new Random(); 
+    int value = rand.nextInt(5162);
+    return value;
+  }
 
   private void classifyTextInput(String input) {
     String inputCaps = input.toUpperCase();
 //    inputCategorizer = new DocumentCategorizerME(model1);
     double[] outcomes = inputCategorizer.categorize(inputCaps);
-    String category = inputCategorizer.getCategory(20);
+    String category = inputCategorizer.getCategory(randomNumber);
 //     String category = inputCategorizer.getBestCategory(outcomes);
 
     if (category.equalsIgnoreCase(input)) {
       System.out.println("NAME MATCH: " + category);
     }
 
-    System.out.println("**********CATEGORY: " + category);
+//    System.out.println("**********CATEGORY: " + category);
 
     // if (category.equalsIgnoreCase("1")) {
     // System.out.println("The question was about Alice");
