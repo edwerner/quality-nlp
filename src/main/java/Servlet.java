@@ -135,7 +135,9 @@ public class Servlet extends HttpServlet {
         if (!duplicateList.contains(sentence)) {
           String[] split = sentence.split(" ");
           sentenceList = Arrays.asList(split);
-          if (sentenceList.contains(input)) {
+//          if (sentenceList.contains(input)) {
+            
+            System.out.println("GOT INSIDE LOOP");
 
             // WhitespaceTokenizer whitespaceTokenizer= WhitespaceTokenizer.INSTANCE;
             // String[] tokens = whitespaceTokenizer.tokenize(sentence);
@@ -210,7 +212,7 @@ public class Servlet extends HttpServlet {
             // }
             duplicateList.add(sentence);
             return sentence;
-          }
+//          }
         }
       }
     }
@@ -224,7 +226,7 @@ public class Servlet extends HttpServlet {
 //    String category = inputCategorizer.getAllResults(outcomes);
      String category = inputCategorizer.getBestCategory(outcomes);
 
-    if (category.equals(input)) {
+    if (category.equalsIgnoreCase(input)) {
       System.out.println("NAME MATCH: " + category);
     }
 
