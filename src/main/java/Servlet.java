@@ -136,107 +136,7 @@ public class Servlet extends HttpServlet {
   }
   
   public String searchSentences(String input) {
-
     nameMatch = classifyTextInput(input);
-
-//    List<String> sentenceList;
-//    if (sentences != null) {
-//      for (String sentence : sentences) {
-//        if (!duplicateList.contains(sentence)) {
-//          String[] split = sentence.split("\\s+");
-//
-//          sentenceList = Arrays.asList(split);
-////          System.out.println("String: " + sentence);
-////          System.out.println("0: " + split[0]);
-////          System.out.println("1: " + split[1]);
-////          System.out.println("2: " + split[2]);
-////          System.out.println("3: " + split[3]);
-//          
-//          Name name = new Name();
-//          name.setName(split[0]);
-//          name.setIndex(split[3]);
-//          
-//          checkForNameMatch(name);
-//          
-//          // if (sentenceList.contains(input)) {
-//
-//          // WhitespaceTokenizer whitespaceTokenizer= WhitespaceTokenizer.INSTANCE;
-//          // String[] tokens = whitespaceTokenizer.tokenize(sentence);
-//
-//          // //Generating the POS tags
-//          // //Load the parts of speech model
-//          // File file = new File(SPEECH_MODEL);
-//          // POSModel posModel = new POSModelLoader().load(file);
-//          //
-//          // //Constructing the tagger
-//          // POSTaggerME tagger = new POSTaggerME(posModel);
-//          //
-//          // //Generating tags from the tokens
-//          // String[] tags = tagger.tag(tokens);
-//          //
-//          //
-//          //
-//          //
-//          //
-//          // Span nameSpans[] = nameFinder.find(split);
-//
-//          // for(Span s: nameSpans){
-//          // System.out.print(s.toString());
-//          // System.out.print(" : ");
-//          // for(int index = s.getStart(); index < s.getEnd(); index++) {
-//          // System.out.print(split[index] + " ");
-//          // }
-//
-//          // //Loading the chunker model
-//          // InputStream inputStream = null;
-//          // try {
-//          // inputStream = new FileInputStream(CHUNKER);
-//          // } catch (FileNotFoundException e) {
-//          // e.printStackTrace();
-//          // }
-//          // ChunkerModel chunkerModel = null;
-//          // try {
-//          // chunkerModel = new ChunkerModel(inputStream);
-//          // } catch (InvalidFormatException e) {
-//          // e.printStackTrace();
-//          // } catch (IOException e) {
-//          // e.printStackTrace();
-//          // }
-//
-//          // Instantiate the ChunkerME class
-//          // ChunkerME chunkerME = new ChunkerME(chunkerModel);
-//
-//          // Generating the chunks
-//          // String result[] = chunkerME.chunk(tokens, tags);
-//          // String question = "";
-//          // for(int i=0;i< result.length;i++) {
-//          // if (tags[i].equals("WP")) {
-//          // System.out.println("WHO TAG");
-//          // }
-//          // System.out.println(tokens[i] + " - " + tags[i] + " - " + result[i]);
-//          // }
-//
-//          // Generating the tagged chunk spans
-//          // Span[] span = chunkerME.chunkAsSpans(tokens, tags);
-//          //
-//          // for (Span s : span) {
-//          // System.out.println(s.toString());
-//          // }
-//
-//          // for (String s : result) {
-//          // System.out.println(s);
-//          // }
-//          // String[] tokens = tokenizer.tokenize(input);
-//          //
-//          // //Finding the names in the sentence
-//          // System.out.println();
-//          // }
-//          duplicateList.add(split[0]);
-//          return sentence;
-//          // }
-//        }
-//      }
-//    }
     return nameMatch;
   }
 
@@ -248,9 +148,7 @@ public class Servlet extends HttpServlet {
 
   private String classifyTextInput(String input) {
     String inputCaps = input.toUpperCase();
-    System.out.println("inputCaps: " + inputCaps);
-    // inputCategorizer = new DocumentCategorizerME(model1);
-//    double[] outcomes = inputCategorizer.categorize(inputCaps);
+    System.out.println("inputCaps: " + inputCaps);;
     String category = inputCategorizer.getCategory(randomNumber);
     matchString = category;
     System.out.println("Category: " + category);
@@ -258,18 +156,6 @@ public class Servlet extends HttpServlet {
     if (category.equals(inputCaps)) {
       return input;
     }
-    // String category = inputCategorizer.getBestCategory(outcomes);
-
-//    if (category.equalsIgnoreCase(input)) {
-//      System.out.println("NAME MATCH: " + category);
-//    }
-
-
-    // if (category.equalsIgnoreCase("1")) {
-    // System.out.println("The question was about Alice");
-    // } else {
-    // System.out.println("The question was not about Alice");
-    // }
     
     return null;
   }
@@ -291,28 +177,6 @@ public class Servlet extends HttpServlet {
     System.out.println("Servlet " + this.getServletName() + " has stopped");
   }
 
-  // @SuppressWarnings("deprecation")
-  // public void trainModel() throws IOException {
-  // Charset charset = Charset.forName("UTF-8");
-  // ObjectStream<String> lineStream = null;
-  // try {
-  // lineStream = new PlainTextByLineStream(new FileInputStream(
-  // "C:\\Program Files\\Apache Software
-  // Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train"), charset);
-  // } catch (FileNotFoundException e) {
-  // e.printStackTrace();
-  // }
-  // ObjectStream<SentenceSample> sampleStream = new
-  // SentenceSampleStream(lineStream);
-  // SentenceModel model;
-  // try {
-  // model = SentenceDetectorME.train("en", sampleStream, true, null,
-  // TrainingParameters.defaultParams());
-  // } finally {
-  // sampleStream.close();
-  // }
-  // }
-
   public String readFileToString(String pathToFile) throws Exception {
     StringBuilder strFile = new StringBuilder();
     BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
@@ -331,62 +195,6 @@ public class Servlet extends HttpServlet {
   public void detectSentence() {
     InputStream modelIn = null;
     InputStream dataIn = null;
-
-    // try {
-    // modelIn = new FileInputStream(
-    // "C:\\Program Files\\Apache Software
-    // Foundation\\apache-opennlp-1.8.4\\models\\en-sent.bin");
-    //
-    // System.out.println("******Train Data Start********");
-    // dataIn = new FileInputStream(TRAINING_DATA);
-    // ObjectStream<String> lineStream = null;
-    // try {
-    // lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
-    // } catch (UnsupportedEncodingException e) {
-    // e.printStackTrace();
-    // }
-    // ObjectStream<DocumentSample> sampleStream = new
-    // DocumentSampleStream(lineStream);
-    //
-    // try {
-    // model1 = DocumentCategorizerME.train("en", sampleStream);
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    //
-    // // save the model to local
-    // BufferedOutputStream modelOut = new BufferedOutputStream(new
-    // FileOutputStream("naive-bayes.bin"));
-    // try {
-    // model1.serialize(modelOut);
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-
-    // test the model file by subjecting it to prediction
-    // DocumentCategorizer doccat = new DocumentCategorizerME(model1);
-    // String[] docWords = "Alice followed the White Rabbit".replaceAll("[^A-Za-z]",
-    // " ").split(" ");
-    // double[] aProbs = doccat.categorize(docWords);
-
-    // // print the probabilities of the categories
-    // System.out
-    // .println("\n---------------------------------\nCategory :
-    // Probability\n---------------------------------");
-    // for (int i = 0; i < doccat.getNumberOfCategories(); i++) {
-    // System.out.println(doccat.getCategory(i) + " : " + aProbs[i]);
-    // }
-    // System.out.println("---------------------------------");
-    //
-    // System.out
-    // .println("\n" + doccat.getBestCategory(aProbs) + " : is the predicted
-    // category for the given sentence.");
-    //
-    // System.out.println("******Train Data End********");
-
-    // } catch (FileNotFoundException e1) {
-    // e1.printStackTrace();
-    // }
 
     try {
       modelIn = new FileInputStream(

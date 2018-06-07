@@ -13,14 +13,16 @@
 	<div class="container flex flex-column flex-center">
 		<div class="match-found">
 			<c:if test="${matchFound != null}">
-				<h1>Name Match Found!</h1>
+				<div class="match-alert alert alert-success">
+					<h1>Name Match Found!</h1>
+				</div>
 			</c:if>
 		</div>
 		<div class="content flex flex-row flex-center">	
 			<form class="chat-form" method="POST" action="/">
   				<div class="form-container col-lg-6">
     				<div class="input-group">
-      					<input type="text" name="input" class="form-control" placeholder="Ask me a question about Alice">
+      					<input type="text" name="input" class="form-control" placeholder="Guess a name, any name">
       					<span class="input-group-btn">
         				<button type="submit" value="submit" class="btn btn-primary">Submit</button>
       					</span>
@@ -29,7 +31,7 @@
 			</form>
 		</div>
 		<div class="output flex flex-column">
-			<div>
+			<div class="output-inner">
 				<c:forEach var="entry" items="${inputArray}">
 					<div class="entry">
 						<c:out value="${entry}"/>
