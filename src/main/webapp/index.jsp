@@ -19,10 +19,12 @@
 			</c:if>
 		</div>
 		<div class="navigation-bar">
-	   		<nav class="navbar navbar-default">
+	   		<nav class="navbar-wrapper navbar navbar-default">
 		      <div class="container-fluid">
-		         <div class="navbar-header">
-		        	<button type="button" class="hint-button-01 btn btn-secondary btn-lg">Begins with</button
+		         <div class="navbar-header flex flex-space-between">
+		        	<button type="button" class="hint-button btn btn-primary btn-lg">Begins with</button>
+		        	<button type="button" class="hint-button btn btn-secondary btn-lg">Ends with</button>
+		        	<button type="button" class="hint-button btn btn-danger btn-lg">Reset</button>
 		         </div>
 		      </div>
 		   </nav>
@@ -31,7 +33,7 @@
 			<form class="chat-form" method="POST" action="/">
   				<div class="form-container col-lg-6">
     				<div class="input-group">
-      					<input type="text" name="input" class="form-control" placeholder="Guess a name, any name">
+      					<input type="text" name="input" class="form-control" placeholder="Guess a full name, any name">
       					<span class="input-group-btn">
         				<button type="submit" value="submit" class="btn btn-primary">Submit</button>
       					</span>

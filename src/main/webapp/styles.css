@@ -53,10 +53,13 @@ body, html {
 
 .navigation-bar {
 	width: 100%;
+}
+
+.navbar-wrapper {
     border-radius: 4px;
 }
 
-.hint-button-01 {
+.hint-button {
 	margin: 10px;
 	outline: none;
 	border: none;
