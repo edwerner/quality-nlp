@@ -135,9 +135,10 @@ public class Servlet extends HttpServlet {
         if (!duplicateList.contains(sentence)) {
           String[] split = sentence.split(" ");
           sentenceList = Arrays.asList(split);
+          System.out.println("String: " + split[0]);
+          System.out.println("Double: " + split[1]);
 //          if (sentenceList.contains(input)) {
             
-            System.out.println("GOT INSIDE LOOP");
 
             // WhitespaceTokenizer whitespaceTokenizer= WhitespaceTokenizer.INSTANCE;
             // String[] tokens = whitespaceTokenizer.tokenize(sentence);
@@ -223,8 +224,8 @@ public class Servlet extends HttpServlet {
     String inputCaps = input.toUpperCase();
 //    inputCategorizer = new DocumentCategorizerME(model1);
     double[] outcomes = inputCategorizer.categorize(inputCaps);
-//    String category = inputCategorizer.getAllResults(outcomes);
-     String category = inputCategorizer.getBestCategory(outcomes);
+    String category = inputCategorizer.getCategory(20);
+//     String category = inputCategorizer.getBestCategory(outcomes);
 
     if (category.equalsIgnoreCase(input)) {
       System.out.println("NAME MATCH: " + category);
