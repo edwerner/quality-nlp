@@ -95,6 +95,7 @@ public class Servlet extends HttpServlet {
     if (input != null) {
       inputArray.add(input);
       inputArray.add(checkForNameMatch(input));
+      Collections.reverse(inputArray);
     }
     request.setAttribute("matchFound", matchFound);
     request.setAttribute("inputArray", inputArray);

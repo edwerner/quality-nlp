@@ -11,7 +11,7 @@
 </head>
 <body>
 	<div class="container flex flex-column flex-center">
-		<div class="match-found>
+		<div class="match-found">
 			<c:if test="${matchFound != null}">
 				<h1>Name Match Found!</h1>
 			</c:if>
