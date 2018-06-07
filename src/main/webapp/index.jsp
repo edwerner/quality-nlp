@@ -18,6 +18,15 @@
 				</div>
 			</c:if>
 		</div>
+		<div class="navigation-bar">
+	   		<nav class="navbar navbar-default">
+		      <div class="container-fluid">
+		         <div class="navbar-header">
+		        	<button type="button" class="hint-button-01 btn btn-secondary btn-lg">Begins with</button
+		         </div>
+		      </div>
+		   </nav>
+		</div>
 		<div class="content flex flex-row flex-center">	
 			<form class="chat-form" method="POST" action="/">
   				<div class="form-container col-lg-6">

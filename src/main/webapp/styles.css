@@ -48,4 +48,16 @@ body, html {
 .match-found {
 	width: 100%;
 	text-align: center;
+	margin-top: 20px;
+}
+
+.navigation-bar {
+	width: 100%;
+    border-radius: 4px;
+}
+
+.hint-button-01 {
+	margin: 10px;
+	outline: none;
+	border: none;
 }
