@@ -11,7 +11,12 @@
 </head>
 <body>
 	<div class="container flex flex-column flex-center">
-		<div class="content flex flex-row flex-center">
+		<div class="match-found>
+			<c:if test="${matchFound != null}">
+				<h1>Name Match Found!</h1>
+			</c:if>
+		</div>
+		<div class="content flex flex-row flex-center">	
 			<form class="chat-form" method="POST" action="/">
   				<div class="form-container col-lg-6">
     				<div class="input-group">

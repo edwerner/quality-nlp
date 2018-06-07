@@ -64,6 +64,9 @@ public class Servlet extends HttpServlet {
   private DoccatModel model1;
   private DocumentCategorizerME inputCategorizer;
   private int randomNumber;
+  private String nameMatch;
+  private String matchString;
+  private String matchFound;
 
   @Override
   public void init() throws ServletException {
@@ -87,14 +90,17 @@ public class Servlet extends HttpServlet {
     String input = request.getParameter("input");
     String lastInput = null;
 
-    if (input != null && searchSentences(input) != null) {
+    searchSentences(input);
+    
+    if (input != null) {
       inputArray.add(input);
-      inputArray.add(searchSentences(input));
+      inputArray.add(checkForNameMatch(input));
     }
+    request.setAttribute("matchFound", matchFound);
     request.setAttribute("inputArray", inputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   };
-
+  
   public void trainModel() {
     InputStream dataIn = null;
 
@@ -127,130 +133,156 @@ public class Servlet extends HttpServlet {
       }
     }
   }
-
+  
   public String searchSentences(String input) {
 
-    classifyTextInput(input);
+    nameMatch = classifyTextInput(input);
 
-    List<String> sentenceList;
-    if (sentences != null) {
-      for (String sentence : sentences) {
-        if (!duplicateList.contains(sentence)) {
-          String[] split = sentence.split("\\s+");
-          
-          sentenceList = Arrays.asList(split);
-          System.out.println("String: " + sentence);
-          System.out.println("0: " + split[0]);
-          System.out.println("1: " + split[1]);
-          System.out.println("2: " + split[2]);
-          System.out.println("3: " + split[3]);
-//          if (sentenceList.contains(input)) {
-            
-
-            // WhitespaceTokenizer whitespaceTokenizer= WhitespaceTokenizer.INSTANCE;
-            // String[] tokens = whitespaceTokenizer.tokenize(sentence);
-
-            // //Generating the POS tags
-            // //Load the parts of speech model
-            // File file = new File(SPEECH_MODEL);
-            // POSModel posModel = new POSModelLoader().load(file);
-            //
-            // //Constructing the tagger
-            // POSTaggerME tagger = new POSTaggerME(posModel);
-            //
-            // //Generating tags from the tokens
-            // String[] tags = tagger.tag(tokens);
-            //
-            //
-            //
-            //
-            //
-            // Span nameSpans[] = nameFinder.find(split);
-
-            // for(Span s: nameSpans){
-            // System.out.print(s.toString());
-            // System.out.print(" : ");
-            // for(int index = s.getStart(); index < s.getEnd(); index++) {
-            // System.out.print(split[index] + " ");
-            // }
-
-            // //Loading the chunker model
-            // InputStream inputStream = null;
-            // try {
-            // inputStream = new FileInputStream(CHUNKER);
-            // } catch (FileNotFoundException e) {
-            // e.printStackTrace();
-            // }
-            // ChunkerModel chunkerModel = null;
-            // try {
-            // chunkerModel = new ChunkerModel(inputStream);
-            // } catch (InvalidFormatException e) {
-            // e.printStackTrace();
-            // } catch (IOException e) {
-            // e.printStackTrace();
-            // }
-
-            // Instantiate the ChunkerME class
-            // ChunkerME chunkerME = new ChunkerME(chunkerModel);
-
-            // Generating the chunks
-            // String result[] = chunkerME.chunk(tokens, tags);
-            // String question = "";
-            // for(int i=0;i< result.length;i++) {
-            // if (tags[i].equals("WP")) {
-            // System.out.println("WHO TAG");
-            // }
-            // System.out.println(tokens[i] + " - " + tags[i] + " - " + result[i]);
-            // }
-
-            // Generating the tagged chunk spans
-            // Span[] span = chunkerME.chunkAsSpans(tokens, tags);
-            //
-            // for (Span s : span) {
-            // System.out.println(s.toString());
-            // }
-
-            // for (String s : result) {
-            // System.out.println(s);
-            // }
-            // String[] tokens = tokenizer.tokenize(input);
-            //
-            // //Finding the names in the sentence
-            // System.out.println();
-            // }
-            duplicateList.add(sentence);
-            return sentence;
-//          }
-        }
-      }
-    }
-    return null;
+//    List<String> sentenceList;
+//    if (sentences != null) {
+//      for (String sentence : sentences) {
+//        if (!duplicateList.contains(sentence)) {
+//          String[] split = sentence.split("\\s+");
+//
+//          sentenceList = Arrays.asList(split);
+////          System.out.println("String: " + sentence);
+////          System.out.println("0: " + split[0]);
+////          System.out.println("1: " + split[1]);
+////          System.out.println("2: " + split[2]);
+////          System.out.println("3: " + split[3]);
+//          
+//          Name name = new Name();
+//          name.setName(split[0]);
+//          name.setIndex(split[3]);
+//          
+//          checkForNameMatch(name);
+//          
+//          // if (sentenceList.contains(input)) {
+//
+//          // WhitespaceTokenizer whitespaceTokenizer= WhitespaceTokenizer.INSTANCE;
+//          // String[] tokens = whitespaceTokenizer.tokenize(sentence);
+//
+//          // //Generating the POS tags
+//          // //Load the parts of speech model
+//          // File file = new File(SPEECH_MODEL);
+//          // POSModel posModel = new POSModelLoader().load(file);
+//          //
+//          // //Constructing the tagger
+//          // POSTaggerME tagger = new POSTaggerME(posModel);
+//          //
+//          // //Generating tags from the tokens
+//          // String[] tags = tagger.tag(tokens);
+//          //
+//          //
+//          //
+//          //
+//          //
+//          // Span nameSpans[] = nameFinder.find(split);
+//
+//          // for(Span s: nameSpans){
+//          // System.out.print(s.toString());
+//          // System.out.print(" : ");
+//          // for(int index = s.getStart(); index < s.getEnd(); index++) {
+//          // System.out.print(split[index] + " ");
+//          // }
+//
+//          // //Loading the chunker model
+//          // InputStream inputStream = null;
+//          // try {
+//          // inputStream = new FileInputStream(CHUNKER);
+//          // } catch (FileNotFoundException e) {
+//          // e.printStackTrace();
+//          // }
+//          // ChunkerModel chunkerModel = null;
+//          // try {
+//          // chunkerModel = new ChunkerModel(inputStream);
+//          // } catch (InvalidFormatException e) {
+//          // e.printStackTrace();
+//          // } catch (IOException e) {
+//          // e.printStackTrace();
+//          // }
+//
+//          // Instantiate the ChunkerME class
+//          // ChunkerME chunkerME = new ChunkerME(chunkerModel);
+//
+//          // Generating the chunks
+//          // String result[] = chunkerME.chunk(tokens, tags);
+//          // String question = "";
+//          // for(int i=0;i< result.length;i++) {
+//          // if (tags[i].equals("WP")) {
+//          // System.out.println("WHO TAG");
+//          // }
+//          // System.out.println(tokens[i] + " - " + tags[i] + " - " + result[i]);
+//          // }
+//
+//          // Generating the tagged chunk spans
+//          // Span[] span = chunkerME.chunkAsSpans(tokens, tags);
+//          //
+//          // for (Span s : span) {
+//          // System.out.println(s.toString());
+//          // }
+//
+//          // for (String s : result) {
+//          // System.out.println(s);
+//          // }
+//          // String[] tokens = tokenizer.tokenize(input);
+//          //
+//          // //Finding the names in the sentence
+//          // System.out.println();
+//          // }
+//          duplicateList.add(split[0]);
+//          return sentence;
+//          // }
+//        }
+//      }
+//    }
+    return nameMatch;
   }
-  
+
   private int getRandomNumber() {
-    Random rand = new Random(); 
+    Random rand = new Random();
     int value = rand.nextInt(5162);
     return value;
   }
 
-  private void classifyTextInput(String input) {
+  private String classifyTextInput(String input) {
     String inputCaps = input.toUpperCase();
-//    inputCategorizer = new DocumentCategorizerME(model1);
-    double[] outcomes = inputCategorizer.categorize(inputCaps);
+    System.out.println("inputCaps: " + inputCaps);
+    // inputCategorizer = new DocumentCategorizerME(model1);
+//    double[] outcomes = inputCategorizer.categorize(inputCaps);
     String category = inputCategorizer.getCategory(randomNumber);
-//     String category = inputCategorizer.getBestCategory(outcomes);
-
-    if (category.equalsIgnoreCase(input)) {
-      System.out.println("NAME MATCH: " + category);
+    matchString = category;
+    System.out.println("Category: " + category);
+    
+    if (category.equals(inputCaps)) {
+      return input;
     }
+    // String category = inputCategorizer.getBestCategory(outcomes);
 
-//    System.out.println("**********CATEGORY: " + category);
+//    if (category.equalsIgnoreCase(input)) {
+//      System.out.println("NAME MATCH: " + category);
+//    }
+
 
     // if (category.equalsIgnoreCase("1")) {
     // System.out.println("The question was about Alice");
     // } else {
     // System.out.println("The question was not about Alice");
     // }
+    
+    return null;
+  }
+
+  public String checkForNameMatch(String name) {
+    System.out.println("name.toUpperCase: " + name.toUpperCase());
+    if (name.toUpperCase().equals(matchString)) {
+      nameMatch = "Name match found!";
+      matchFound = "Name Match Found!";
+    } else {
+      nameMatch = "No name match found.";
+      matchFound = null;
+    }
+    return nameMatch;
   }
 
   @Override

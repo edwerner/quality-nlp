@@ -34,3 +34,7 @@ body, html {
 .content {
 	height: 50%;
 }
+
+.match-found {
+	color: green;
+}
