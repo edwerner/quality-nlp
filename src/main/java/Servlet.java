@@ -136,7 +136,8 @@ public class Servlet extends HttpServlet {
     }
   }
 
-  public void searchSentences(String input) 
+  public void searchSentences(String input) {
+    
     if (sentences != null) {
       for (String sentence : sentences) {
         String[] split = sentence.split(",");
