@@ -137,9 +137,41 @@ public class Servlet extends HttpServlet {
     }
   }
   
+//  public String searchSentences(String input) {
+//    nameMatch = classifyTextInput(input);
+//    return nameMatch;
+//  }
+  
   public String searchSentences(String input) {
-    nameMatch = classifyTextInput(input);
-    return nameMatch;
+
+    classifyTextInput(input);
+
+    List<String> sentenceList;
+    if (sentences != null) {
+      for (String sentence : sentences) {
+        if (!duplicateList.contains(sentence)) {
+//          String[] split = sentence.split("\\s+");
+          
+
+          String[] split = sentence.split(",");
+          
+          for (int i = 0; i < split.length; i++) {
+            System.out.println("***************SPLIT**********: " + split[i]);
+          }
+          
+//          sentenceList = Arrays.asList(split);
+//          System.out.println("String: " + sentence);
+//          System.out.println("0: " + split[0]);
+//          System.out.println("1: " + split[1]);
+//          System.out.println("2: " + split[2]);
+//          System.out.println("3: " + split[3]);
+
+          duplicateList.add(sentence);
+          return sentence;
+        }
+      }
+    }
+    return null;
   }
 
   private int getRandomNumber() {
@@ -150,10 +182,10 @@ public class Servlet extends HttpServlet {
 
   private String classifyTextInput(String input) {
     String inputCaps = input.toUpperCase();
-    System.out.println("inputCaps: " + inputCaps);
+//    System.out.println("inputCaps: " + inputCaps);
 //    String category = inputCategorizer.getCategory(randomNumber);
     String age = inputCategorizer.getCategory(1);
-    System.out.println("AGE: " + age);
+//    System.out.println("AGE: " + age);
 //    matchString = category;
 //    System.out.println("Category: " + category);
     
