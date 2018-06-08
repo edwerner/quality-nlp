@@ -59,6 +59,7 @@ public class Servlet extends HttpServlet {
   private final String SPEECH_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-pos-maxent.bin";
   private final String CHUNKER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-chunker.bin";
   private final String TRAINED_NAME_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\names";
+  private final String TRAINED_CENSUS_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\census";
   private TokenizerME tokenizer;
   private NameFinderME nameFinder;
   private DoccatModel model1;
@@ -105,23 +106,24 @@ public class Servlet extends HttpServlet {
   public void trainModel() {
     InputStream dataIn = null;
 
-    // try {
-    // dataIn = new FileInputStream(TRAINING_DATA);
-    // ObjectStream<String> lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
-    // ObjectStream<DocumentSample> sampleStream = new
-    // DocumentSampleStream(lineStream);
-    // int cutoff = 2;
-    // int trainingIterations = 30;
-    // model1 = DocumentCategorizerME.train("en", sampleStream);
-
     try {
-      dataIn = new FileInputStream(TRAINED_NAME_MODEL);
+      
+//       dataIn = new FileInputStream(TRAINING_DATA);
+//       ObjectStream<String> lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
+//       ObjectStream<DocumentSample> sampleStream = new
+//       DocumentSampleStream(lineStream);
+//       int cutoff = 2;
+//       int trainingIterations = 30;
+//       model1 = DocumentCategorizerME.train("en", sampleStream);
+      
+      
+      dataIn = new FileInputStream(TRAINED_CENSUS_MODEL);
       DoccatModel tokenizerModel = new DoccatModel(dataIn);
       inputCategorizer = new DocumentCategorizerME(tokenizerModel);
 
-      // BufferedOutputStream modelOut = new BufferedOutputStream(new
-      // FileOutputStream("names"));
-      // model1.serialize(modelOut);
+//       BufferedOutputStream modelOut = new BufferedOutputStream(new
+//       FileOutputStream("census"));
+//       model1.serialize(modelOut);
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
@@ -142,20 +144,22 @@ public class Servlet extends HttpServlet {
 
   private int getRandomNumber() {
     Random rand = new Random();
-    int value = rand.nextInt(5162);
+    int value = rand.nextInt(1);
     return value;
   }
 
   private String classifyTextInput(String input) {
     String inputCaps = input.toUpperCase();
-    System.out.println("inputCaps: " + inputCaps);;
-    String category = inputCategorizer.getCategory(randomNumber);
-    matchString = category;
-    System.out.println("Category: " + category);
+    System.out.println("inputCaps: " + inputCaps);
+//    String category = inputCategorizer.getCategory(randomNumber);
+    String age = inputCategorizer.getCategory(1);
+    System.out.println("AGE: " + age);
+//    matchString = category;
+//    System.out.println("Category: " + category);
     
-    if (category.equals(inputCaps)) {
-      return input;
-    }
+//    if (category.equals(inputCaps)) {
+//      return input;
+//    }
     
     return null;
   }
