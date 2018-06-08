@@ -92,7 +92,7 @@ public class Servlet extends HttpServlet {
     String lastInput = null;
 
     searchSentences(input);
-    
+
     if (input != null) {
       inputArray.add(input);
       inputArray.add(checkForNameMatch(input));
@@ -102,28 +102,27 @@ public class Servlet extends HttpServlet {
     request.setAttribute("inputArray", inputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   };
-  
+
   public void trainModel() {
     InputStream dataIn = null;
 
     try {
-      
-//       dataIn = new FileInputStream(TRAINING_DATA);
-//       ObjectStream<String> lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
-//       ObjectStream<DocumentSample> sampleStream = new
-//       DocumentSampleStream(lineStream);
-//       int cutoff = 2;
-//       int trainingIterations = 30;
-//       model1 = DocumentCategorizerME.train("en", sampleStream);
-      
-      
+
+      // dataIn = new FileInputStream(TRAINING_DATA);
+      // ObjectStream<String> lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
+      // ObjectStream<DocumentSample> sampleStream = new
+      // DocumentSampleStream(lineStream);
+      // int cutoff = 2;
+      // int trainingIterations = 30;
+      // model1 = DocumentCategorizerME.train("en", sampleStream);
+
       dataIn = new FileInputStream(TRAINED_CENSUS_MODEL);
       DoccatModel tokenizerModel = new DoccatModel(dataIn);
       inputCategorizer = new DocumentCategorizerME(tokenizerModel);
 
-//       BufferedOutputStream modelOut = new BufferedOutputStream(new
-//       FileOutputStream("census"));
-//       model1.serialize(modelOut);
+      // BufferedOutputStream modelOut = new BufferedOutputStream(new
+      // FileOutputStream("census"));
+      // model1.serialize(modelOut);
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
@@ -136,64 +135,22 @@ public class Servlet extends HttpServlet {
       }
     }
   }
-  
-//  public String searchSentences(String input) {
-//    nameMatch = classifyTextInput(input);
-//    return nameMatch;
-//  }
-  
-  public String searchSentences(String input) {
 
-    classifyTextInput(input);
-
-    List<String> sentenceList;
+  public void searchSentences(String input) 
     if (sentences != null) {
       for (String sentence : sentences) {
-        if (!duplicateList.contains(sentence)) {
-//          String[] split = sentence.split("\\s+");
-          
-
-          String[] split = sentence.split(",");
-          
-          for (int i = 0; i < split.length; i++) {
-            System.out.println("***************SPLIT**********: " + split[i]);
-          }
-          
-//          sentenceList = Arrays.asList(split);
-//          System.out.println("String: " + sentence);
-//          System.out.println("0: " + split[0]);
-//          System.out.println("1: " + split[1]);
-//          System.out.println("2: " + split[2]);
-//          System.out.println("3: " + split[3]);
-
-          duplicateList.add(sentence);
-          return sentence;
+        String[] split = sentence.split(",");
+        for (int i = 0; i < split.length; i++) {
+          System.out.println("***************SPLIT**********: " + split[i]);
         }
       }
     }
-    return null;
   }
 
   private int getRandomNumber() {
     Random rand = new Random();
     int value = rand.nextInt(1);
     return value;
-  }
-
-  private String classifyTextInput(String input) {
-    String inputCaps = input.toUpperCase();
-//    System.out.println("inputCaps: " + inputCaps);
-//    String category = inputCategorizer.getCategory(randomNumber);
-    String age = inputCategorizer.getCategory(1);
-//    System.out.println("AGE: " + age);
-//    matchString = category;
-//    System.out.println("Category: " + category);
-    
-//    if (category.equals(inputCaps)) {
-//      return input;
-//    }
-    
-    return null;
   }
 
   public String checkForNameMatch(String name) {
