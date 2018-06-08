@@ -52,6 +52,7 @@ public class Servlet extends HttpServlet {
   public List<String> inputArray;
   public List<String> outputArray;
   private ArrayList<String> duplicateList;
+  private List<Person> personList;
   private String[] sentences;
   private final String TRAINING_DATA = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train";
   private final String TOKENIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-token.bin";
@@ -68,6 +69,14 @@ public class Servlet extends HttpServlet {
   private String nameMatch;
   private String matchString;
   private String matchFound;
+  private List<String> occupationList;
+  private List<String> ageList;
+  private List<String> educationList;
+  private List<String> maritalStatusList;
+  private List<String> countryList;
+  private List<String> incomeList;
+  private List<String> genderList;
+  private List<String> raceList;
 
   @Override
   public void init() throws ServletException {
@@ -137,12 +146,72 @@ public class Servlet extends HttpServlet {
   }
 
   public void searchSentences(String input) {
-    
+
+    ageList = new ArrayList<String>();
+    occupationList = new ArrayList<String>();
+    educationList = new ArrayList<String>();
+    maritalStatusList = new ArrayList<String>();
+    countryList = new ArrayList<String>();
+    incomeList = new ArrayList<String>();
+    genderList = new ArrayList<String>();
+    raceList = new ArrayList<String>();
+
     if (sentences != null) {
       for (String sentence : sentences) {
+        
         String[] split = sentence.split(",");
+        
         for (int i = 0; i < split.length; i++) {
-          System.out.println("***************SPLIT**********: " + split[i]);
+          
+          Person person = new Person();
+          person.setAge(split[0]);
+          person.setOccupation(split[1]);
+          person.setEducationLevel(split[3]);
+          person.setMaritalStatus(split[5]);
+          person.setCountry(split[13]);
+          person.setIncome(split[14].replaceAll("\\.", ""));
+          person.setGender(split[9]);
+          person.setRace(split[8]);
+          personList = new ArrayList<Person>();
+          personList.add(person);
+          
+          ageList.add(person.getAge());
+
+          if (!occupationList.contains(person.getOccupation())) {
+            occupationList.add(person.getOccupation());
+            System.out.println("OCCUPATION: " + person.getOccupation());
+          }
+          
+          if (!educationList.contains(person.getEducationLevel())) {
+            educationList.add(person.getEducationLevel());
+            System.out.println("EDUCATION: " + person.getEducationLevel());
+          }
+          
+          if (!maritalStatusList.contains(person.getMaritalStatus())) {
+            maritalStatusList.add(person.getMaritalStatus());
+            System.out.println("MARITAL STATUS: " + person.getMaritalStatus());
+          }
+          
+          if (!countryList.contains(person.getCountry())) {
+            countryList.add(person.getCountry());
+            System.out.println("COUNTRY: " + person.getCountry());
+          }
+
+          if (!incomeList.contains(person.getIncome())) {
+            incomeList.add(person.getIncome());
+            System.out.println("INCOME: " + person.getIncome());
+          }
+
+          if (!genderList.contains(person.getGender())) {
+            genderList.add(person.getGender());
+            System.out.println("GENDER: " + person.getGender());
+          }
+
+          if (!raceList.contains(person.getRace())) {
+            raceList.add(person.getRace());
+            System.out.println("RACE: " + person.getRace());
+          }
+          
         }
       }
     }
@@ -155,7 +224,6 @@ public class Servlet extends HttpServlet {
   }
 
   public String checkForNameMatch(String name) {
-    System.out.println("name.toUpperCase: " + name.toUpperCase());
     if (name.toUpperCase().equals(matchString)) {
       nameMatch = "Name match found!";
       matchFound = "Name Match Found!";
