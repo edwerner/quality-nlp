@@ -13,7 +13,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.ServletException;
@@ -77,6 +80,8 @@ public class Servlet extends HttpServlet {
   private List<String> incomeList;
   private List<String> genderList;
   private List<String> raceList;
+  private List<String> occupationCountList;
+  private HashMap<String, Integer> map;
 
   @Override
   public void init() throws ServletException {
@@ -85,6 +90,7 @@ public class Servlet extends HttpServlet {
     trainModel();
     detectSentence();
     randomNumber = getRandomNumber();
+    map = new HashMap<String, Integer>();
     System.out.println("Servlet " + this.getServletName() + " has started");
   }
 
@@ -147,6 +153,7 @@ public class Servlet extends HttpServlet {
 
   public void searchSentences(String input) {
 
+    personList = new ArrayList<Person>();
     ageList = new ArrayList<String>();
     occupationList = new ArrayList<String>();
     educationList = new ArrayList<String>();
@@ -157,13 +164,15 @@ public class Servlet extends HttpServlet {
     raceList = new ArrayList<String>();
 
     if (sentences != null) {
+
       for (String sentence : sentences) {
-        
+
         String[] split = sentence.split(",");
         
+        Person person = new Person();
+
         for (int i = 0; i < split.length; i++) {
-          
-          Person person = new Person();
+
           person.setAge(split[0]);
           person.setOccupation(split[1]);
           person.setEducationLevel(split[3]);
@@ -172,48 +181,159 @@ public class Servlet extends HttpServlet {
           person.setIncome(split[14].replaceAll("\\.", ""));
           person.setGender(split[9]);
           person.setRace(split[8]);
-          personList = new ArrayList<Person>();
-          personList.add(person);
-          
+
           ageList.add(person.getAge());
 
           if (!occupationList.contains(person.getOccupation())) {
             occupationList.add(person.getOccupation());
-            System.out.println("OCCUPATION: " + person.getOccupation());
+//            System.out.println("OCCUPATION: " + person.getOccupation());
           }
-          
+
           if (!educationList.contains(person.getEducationLevel())) {
             educationList.add(person.getEducationLevel());
-            System.out.println("EDUCATION: " + person.getEducationLevel());
+//            System.out.println("EDUCATION: " + person.getEducationLevel());
           }
-          
+
           if (!maritalStatusList.contains(person.getMaritalStatus())) {
             maritalStatusList.add(person.getMaritalStatus());
-            System.out.println("MARITAL STATUS: " + person.getMaritalStatus());
+//            System.out.println("MARITAL STATUS: " + person.getMaritalStatus());
           }
-          
+
           if (!countryList.contains(person.getCountry())) {
             countryList.add(person.getCountry());
-            System.out.println("COUNTRY: " + person.getCountry());
+//            System.out.println("COUNTRY: " + person.getCountry());
           }
 
           if (!incomeList.contains(person.getIncome())) {
             incomeList.add(person.getIncome());
-            System.out.println("INCOME: " + person.getIncome());
+//            System.out.println("INCOME: " + person.getIncome());
           }
 
           if (!genderList.contains(person.getGender())) {
             genderList.add(person.getGender());
-            System.out.println("GENDER: " + person.getGender());
+//            System.out.println("GENDER: " + person.getGender());
           }
 
           if (!raceList.contains(person.getRace())) {
             raceList.add(person.getRace());
-            System.out.println("RACE: " + person.getRace());
+//            System.out.println("RACE: " + person.getRace());
           }
-          
+        }
+        personList.add(person);
+      }
+    }
+    setAttributeCounts();
+  }
+
+  private void setAttributeCounts() {
+
+    int occupationCount = 0;
+    int educationCount = 0;
+    int maritalCount = 0;
+    int countryCount = 0;
+    int incomeCount = 0;
+    int genderCount = 0;
+    int raceCount = 0;
+
+    map.put("marital", maritalCount);
+    map.put("country", countryCount);
+    map.put("income", incomeCount);
+    map.put("gender", genderCount);
+    map.put("race", raceCount);
+    map.put("occupation", occupationCount);
+    map.put("education", educationCount);
+
+    System.out.println("SIZE : " + personList.size());
+    for (Person person : personList) {
+      for (String occupation : occupationList) {
+        if (person.getOccupation() != null) {
+          if (person.getOccupation().equals(occupation)) {
+            occupationCount++;
+            map.put(occupation, occupationCount);
+//            System.out.println("OCCUPATION COUNT: " + occupationCount);
+          }
         }
       }
+    }
+
+    for (Person person : personList) {
+      for (String education : educationList) {
+        if (person.getEducationLevel() != null) {
+          if (person.getEducationLevel().equals(education)) {
+            educationCount++;
+            map.put(education, educationCount);
+//            System.out.println("EDUCATION COUNT: " + educationCount);
+          }
+        }
+      }
+    }
+
+    for (Person person : personList) {
+      for (String maritalStatus : maritalStatusList) {
+        if (person.getMaritalStatus() != null) {
+          if (person.getMaritalStatus().equals(maritalStatus)) {
+            maritalCount++;
+            map.put(maritalStatus, maritalCount);
+//            System.out.println("MARITAL COUNT: " + maritalCount);
+          }
+        }
+      }
+    }
+
+    for (Person person : personList) {
+      for (String country : countryList) {
+        if (person.getCountry() != null) {
+          if (person.getCountry().equals(country)) {
+//            System.out.println(person.getCountry() + " " + country);
+            countryCount++;
+            map.put(country, countryCount);
+//            System.out.println("COUNTRY COUNT: " + countryCount);
+          }
+        }
+      }
+    }
+
+    for (Person person : personList) {
+      for (String income : incomeList) {
+        if (person.getIncome() != null) {
+          if (person.getIncome().equals(income)) {
+            incomeCount++;
+            map.put(income, incomeCount);
+//            System.out.println("INCOME COUNT: " + incomeCount);
+          }
+        }
+      }
+    }
+
+    for (Person person : personList) {
+      for (String gender : genderList) {
+        if (person.getGender() != null) {
+          if (person.getGender().equals(gender)) {
+            genderCount++;
+            map.put(gender, genderCount);
+//            System.out.println("GENDER COUNT: " + genderCount);
+          }
+        }
+      }
+    }
+
+    for (Person person : personList) {
+      for (String race : raceList) {
+        if (person.getRace() != null) {
+          if (person.getRace().equals(race)) {
+            raceCount++;
+            map.put(race, raceCount);
+//            System.out.println("RACE COUNT: " + raceCount);
+          }
+        }
+      }
+    }
+    
+    Iterator it = map.entrySet().iterator();
+    while (it.hasNext()) {
+        Map.Entry pair = (Map.Entry)it.next();
+        System.out.println(pair.getKey() + " = " + pair.getValue());
+        it.remove(); // avoids a ConcurrentModificationException
     }
   }
 
