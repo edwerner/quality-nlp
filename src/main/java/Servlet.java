@@ -168,7 +168,7 @@ public class Servlet extends HttpServlet {
       for (String sentence : sentences) {
 
         String[] split = sentence.split(",");
-        
+
         Person person = new Person();
 
         for (int i = 0; i < split.length; i++) {
@@ -186,37 +186,37 @@ public class Servlet extends HttpServlet {
 
           if (!occupationList.contains(person.getOccupation())) {
             occupationList.add(person.getOccupation());
-//            System.out.println("OCCUPATION: " + person.getOccupation());
+            // System.out.println("OCCUPATION: " + person.getOccupation());
           }
 
           if (!educationList.contains(person.getEducationLevel())) {
             educationList.add(person.getEducationLevel());
-//            System.out.println("EDUCATION: " + person.getEducationLevel());
+            // System.out.println("EDUCATION: " + person.getEducationLevel());
           }
 
           if (!maritalStatusList.contains(person.getMaritalStatus())) {
             maritalStatusList.add(person.getMaritalStatus());
-//            System.out.println("MARITAL STATUS: " + person.getMaritalStatus());
+            // System.out.println("MARITAL STATUS: " + person.getMaritalStatus());
           }
 
           if (!countryList.contains(person.getCountry())) {
             countryList.add(person.getCountry());
-//            System.out.println("COUNTRY: " + person.getCountry());
+            // System.out.println("COUNTRY: " + person.getCountry());
           }
 
           if (!incomeList.contains(person.getIncome())) {
             incomeList.add(person.getIncome());
-//            System.out.println("INCOME: " + person.getIncome());
+            // System.out.println("INCOME: " + person.getIncome());
           }
 
           if (!genderList.contains(person.getGender())) {
             genderList.add(person.getGender());
-//            System.out.println("GENDER: " + person.getGender());
+            // System.out.println("GENDER: " + person.getGender());
           }
 
           if (!raceList.contains(person.getRace())) {
             raceList.add(person.getRace());
-//            System.out.println("RACE: " + person.getRace());
+            // System.out.println("RACE: " + person.getRace());
           }
         }
         personList.add(person);
@@ -235,105 +235,106 @@ public class Servlet extends HttpServlet {
     int genderCount = 0;
     int raceCount = 0;
 
-    map.put("marital", maritalCount);
-    map.put("country", countryCount);
-    map.put("income", incomeCount);
-    map.put("gender", genderCount);
-    map.put("race", raceCount);
-    map.put("occupation", occupationCount);
-    map.put("education", educationCount);
+    // map.put("marital", maritalCount);
+    // map.put("country", countryCount);
+    // map.put("income", incomeCount);
+    // map.put("gender", genderCount);
+    // map.put("race", raceCount);
+    // map.put("occupation", occupationCount);
+    // map.put("education", educationCount);
 
-    System.out.println("SIZE : " + personList.size());
-    for (Person person : personList) {
-      for (String occupation : occupationList) {
+    // TODO: create nested hashmap
+
+    for (String occupation : occupationList) {
+      for (Person person : personList) {
         if (person.getOccupation() != null) {
-          if (person.getOccupation().equals(occupation)) {
+          if (person.getOccupation() == occupation) {
             occupationCount++;
             map.put(occupation, occupationCount);
-//            System.out.println("OCCUPATION COUNT: " + occupationCount);
+            System.out.println("OCCUPATION COUNT: " + occupationCount);
           }
         }
       }
     }
 
-    for (Person person : personList) {
-      for (String education : educationList) {
+    for (String education : educationList) {
+      for (Person person : personList) {
         if (person.getEducationLevel() != null) {
-          if (person.getEducationLevel().equals(education)) {
+          if (person.getEducationLevel() == education) {
             educationCount++;
             map.put(education, educationCount);
-//            System.out.println("EDUCATION COUNT: " + educationCount);
+            System.out.println("EDUCATION COUNT: " + educationCount);
           }
         }
       }
     }
 
-    for (Person person : personList) {
-      for (String maritalStatus : maritalStatusList) {
+    for (String maritalStatus : maritalStatusList) {
+      for (Person person : personList) {
         if (person.getMaritalStatus() != null) {
-          if (person.getMaritalStatus().equals(maritalStatus)) {
+          if (person.getMaritalStatus() == maritalStatus) {
             maritalCount++;
             map.put(maritalStatus, maritalCount);
-//            System.out.println("MARITAL COUNT: " + maritalCount);
+            System.out.println("MARITAL COUNT: " + maritalCount);
           }
         }
       }
     }
 
-    for (Person person : personList) {
-      for (String country : countryList) {
+    for (String country : countryList) {
+      for (Person person : personList) {
         if (person.getCountry() != null) {
-          if (person.getCountry().equals(country)) {
-//            System.out.println(person.getCountry() + " " + country);
+          if (person.getCountry() == country) {
             countryCount++;
             map.put(country, countryCount);
-//            System.out.println("COUNTRY COUNT: " + countryCount);
+            System.out.println("COUNTRY COUNT: " + countryCount);
           }
         }
       }
     }
 
-    for (Person person : personList) {
-      for (String income : incomeList) {
+    for (String income : incomeList) {
+      for (Person person : personList) {
         if (person.getIncome() != null) {
-          if (person.getIncome().equals(income)) {
+          if (person.getIncome() == income) {
             incomeCount++;
             map.put(income, incomeCount);
-//            System.out.println("INCOME COUNT: " + incomeCount);
+            System.out.println("INCOME COUNT: " + incomeCount);
           }
         }
       }
     }
 
-    for (Person person : personList) {
-      for (String gender : genderList) {
+    for (String gender : genderList) {
+      for (Person person : personList) {
         if (person.getGender() != null) {
-          if (person.getGender().equals(gender)) {
+          if (person.getGender() == gender) {
             genderCount++;
             map.put(gender, genderCount);
-//            System.out.println("GENDER COUNT: " + genderCount);
+            System.out.println("GENDER COUNT: " + genderCount);
           }
         }
       }
     }
 
-    for (Person person : personList) {
-      for (String race : raceList) {
+    for (String race : raceList) {
+      for (Person person : personList) {
         if (person.getRace() != null) {
-          if (person.getRace().equals(race)) {
+          if (person.getRace() == race) {
             raceCount++;
             map.put(race, raceCount);
-//            System.out.println("RACE COUNT: " + raceCount);
+            System.out.println("RACE COUNT: " + raceCount);
           }
         }
       }
     }
-    
+
+    System.out.println("SIZE: " + genderList.size());
     Iterator it = map.entrySet().iterator();
     while (it.hasNext()) {
-        Map.Entry pair = (Map.Entry)it.next();
-        System.out.println(pair.getKey() + " = " + pair.getValue());
-        it.remove(); // avoids a ConcurrentModificationException
+      Map.Entry pair = (Map.Entry) it.next();
+      System.out.println(pair.getKey() + " = " + pair.getValue());
+      it.remove(); // avoids a ConcurrentModificationException
     }
   }
 
