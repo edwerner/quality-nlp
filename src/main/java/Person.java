@@ -8,6 +8,7 @@ public class Person {
   private String income;
   private String age;
   private String race;
+  private int count;
   
   public Person() {
     
@@ -75,5 +76,13 @@ public class Person {
   
   public String getGender() {
     return gender;
+  }
+
+  public int getCount() {
+    return count;
+  }
+
+  public void setCount(int count) {
+    this.count = count;
   }
 }

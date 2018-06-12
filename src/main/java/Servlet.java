@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,7 +81,6 @@ public class Servlet extends HttpServlet {
   private List<String> incomeList;
   private List<String> genderList;
   private List<String> raceList;
-  private List<String> occupationCountList;
   private HashMap<String, Integer> map;
 
   @Override
@@ -104,9 +104,9 @@ public class Servlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String input = request.getParameter("input");
-    String lastInput = null;
+    // String lastInput = null;
 
-    searchSentences(input);
+    createAttributeLists(input);
 
     if (input != null) {
       inputArray.add(input);
@@ -151,7 +151,7 @@ public class Servlet extends HttpServlet {
     }
   }
 
-  public void searchSentences(String input) {
+  public void createAttributeLists(String input) {
 
     personList = new ArrayList<Person>();
     ageList = new ArrayList<String>();
@@ -235,60 +235,47 @@ public class Servlet extends HttpServlet {
     int genderCount = 0;
     int raceCount = 0;
 
-    // map.put("marital", maritalCount);
-    // map.put("country", countryCount);
-    // map.put("income", incomeCount);
-    // map.put("gender", genderCount);
-    // map.put("race", raceCount);
-    // map.put("occupation", occupationCount);
-    // map.put("education", educationCount);
-
     // TODO: create nested hashmap
+
+    for (String country : countryList) {
+      for (Person person : personList) {
+        if (new String(person.getCountry()).equals(country)) {
+          if (map.get(country) != null) {
+            map.put(country, map.get(country) + 1);
+          } else {
+            map.put(country, 1);
+          }
+          System.out.println("COUNTRY: " + country + " COUNT: " + map.get(country));
+        }
+      }
+    }
 
     for (String occupation : occupationList) {
       for (Person person : personList) {
-        if (person.getOccupation() != null) {
-          if (person.getOccupation() == occupation) {
-            occupationCount++;
-            map.put(occupation, occupationCount);
-            System.out.println("OCCUPATION COUNT: " + occupationCount);
-          }
+        if (new String(person.getOccupation()).equals(occupation)) {
+          occupationCount++;
+          map.put(occupation, occupationCount);
+          // System.out.println("OCCUPATION COUNT: " + occupationCount);
         }
       }
     }
 
     for (String education : educationList) {
       for (Person person : personList) {
-        if (person.getEducationLevel() != null) {
-          if (person.getEducationLevel() == education) {
-            educationCount++;
-            map.put(education, educationCount);
-            System.out.println("EDUCATION COUNT: " + educationCount);
-          }
+        if (person.getEducationLevel().equals(education)) {
+          educationCount++;
+          map.put(education, educationCount);
+          // System.out.println("EDUCATION COUNT: " + educationCount);
         }
       }
     }
 
     for (String maritalStatus : maritalStatusList) {
       for (Person person : personList) {
-        if (person.getMaritalStatus() != null) {
-          if (person.getMaritalStatus() == maritalStatus) {
-            maritalCount++;
-            map.put(maritalStatus, maritalCount);
-            System.out.println("MARITAL COUNT: " + maritalCount);
-          }
-        }
-      }
-    }
-
-    for (String country : countryList) {
-      for (Person person : personList) {
-        if (person.getCountry() != null) {
-          if (person.getCountry() == country) {
-            countryCount++;
-            map.put(country, countryCount);
-            System.out.println("COUNTRY COUNT: " + countryCount);
-          }
+        if (person.getMaritalStatus().equals(maritalStatus)) {
+          maritalCount++;
+          map.put(maritalStatus, maritalCount);
+          // System.out.println("MARITAL COUNT: " + maritalCount);
         }
       }
     }
@@ -296,40 +283,33 @@ public class Servlet extends HttpServlet {
     for (String income : incomeList) {
       for (Person person : personList) {
         if (person.getIncome() != null) {
-          if (person.getIncome() == income) {
-            incomeCount++;
-            map.put(income, incomeCount);
-            System.out.println("INCOME COUNT: " + incomeCount);
-          }
+          incomeCount++;
+          map.put(income, incomeCount);
+          // System.out.println("INCOME COUNT: " + incomeCount);
         }
       }
     }
 
     for (String gender : genderList) {
       for (Person person : personList) {
-        if (person.getGender() != null) {
-          if (person.getGender() == gender) {
-            genderCount++;
-            map.put(gender, genderCount);
-            System.out.println("GENDER COUNT: " + genderCount);
-          }
+        if (person.getGender().equals(gender)) {
+          genderCount++;
+          map.put(gender, genderCount);
+          // System.out.println("GENDER COUNT: " + genderCount);
         }
       }
     }
 
     for (String race : raceList) {
       for (Person person : personList) {
-        if (person.getRace() != null) {
-          if (person.getRace() == race) {
-            raceCount++;
-            map.put(race, raceCount);
-            System.out.println("RACE COUNT: " + raceCount);
-          }
+        if (person.getRace().equals(race)) {
+          raceCount++;
+          map.put(race, raceCount);
+          // System.out.println("RACE COUNT: " + raceCount);
         }
       }
     }
 
-    System.out.println("SIZE: " + genderList.size());
     Iterator it = map.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry pair = (Map.Entry) it.next();
