@@ -83,6 +83,13 @@ public class Servlet extends HttpServlet {
   private List<String> genderList;
   private List<String> raceList;
   private HashMap<String, Integer> map;
+  private double countryAverage;
+  private double occupationAverage;
+  private double educationAverage;
+  private double maritalStatusAverage;
+  private double incomeAverage;
+  private double genderAverage;
+  private double raceAverage;
   private static DecimalFormat decimalFormat;
 
   @Override
@@ -231,14 +238,6 @@ public class Servlet extends HttpServlet {
 
   private void setAttributeCounts() {
 
-    int occupationCount = 0;
-    int educationCount = 0;
-    int maritalCount = 0;
-    int countryCount = 0;
-    int incomeCount = 0;
-    int genderCount = 0;
-    int raceCount = 0;
-
     // TODO: create nested hashmap
 
     for (String country : countryList) {
@@ -249,8 +248,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(country, 1);
           }
-          double average = (double) map.get(country) / (double) PERSON_COUNT * 100;
-          System.out.println(country + ": " + decimalFormat.format(average) + "%");
+          countryAverage = (double) map.get(country) / (double) PERSON_COUNT * 100;
         }
       }
     }
@@ -263,7 +261,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(occupation, 1);
           }
-          // System.out.println("OCCUPATION COUNT: " + occupationCount);
+          occupationAverage = (double) map.get(occupation) / (double) PERSON_COUNT * 100;
         }
       }
     }
@@ -276,8 +274,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(education, 1);
           }
-          map.put(education, educationCount);
-          // System.out.println("EDUCATION COUNT: " + educationCount);
+          educationAverage = (double) map.get(education) / (double) PERSON_COUNT * 100;
         }
       }
     }
@@ -290,8 +287,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(maritalStatus, 1);
           }
-          map.put(maritalStatus, maritalCount);
-          // System.out.println("MARITAL COUNT: " + maritalCount);
+          maritalStatusAverage = (double) map.get(maritalStatus) / (double) PERSON_COUNT * 100;
         }
       }
     }
@@ -303,8 +299,7 @@ public class Servlet extends HttpServlet {
         } else {
           map.put(income, 1);
         }
-        map.put(income, incomeCount);
-        // System.out.println("INCOME COUNT: " + incomeCount);
+        incomeAverage = (double) map.get(income) / (double) PERSON_COUNT * 100;
       }
     }
 
@@ -316,8 +311,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(gender, 1);
           }
-          map.put(gender, genderCount);
-          // System.out.println("GENDER COUNT: " + genderCount);
+          genderAverage = (double) map.get(gender) / (double) PERSON_COUNT * 100;
         }
       }
     }
@@ -330,18 +324,16 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(race, 1);
           }
-          map.put(race, raceCount);
-          // System.out.println("RACE COUNT: " + raceCount);
+          raceAverage = (double) map.get(race) / (double) PERSON_COUNT * 100;
         }
       }
     }
 
-    Iterator it = map.entrySet().iterator();
-    while (it.hasNext()) {
-      Map.Entry pair = (Map.Entry) it.next();
-//      System.out.println(pair.getKey() + " = " + pair.getValue());
-      it.remove(); // avoids a ConcurrentModificationException
-    }
+//    Iterator it = map.entrySet().iterator();
+//    while (it.hasNext()) {
+//      Map.Entry pair = (Map.Entry) it.next();
+//      it.remove();
+//    }
   }
 
   private int getRandomNumber() {
