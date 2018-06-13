@@ -65,6 +65,7 @@ public class Servlet extends HttpServlet {
   private final String CHUNKER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-chunker.bin";
   private final String TRAINED_NAME_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\names";
   private final String TRAINED_CENSUS_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\census";
+  private final int PERSON_COUNT = 32561;
   private TokenizerME tokenizer;
   private NameFinderME nameFinder;
   private DoccatModel model1;
@@ -82,6 +83,7 @@ public class Servlet extends HttpServlet {
   private List<String> genderList;
   private List<String> raceList;
   private HashMap<String, Integer> map;
+  private static DecimalFormat decimalFormat;
 
   @Override
   public void init() throws ServletException {
@@ -91,6 +93,8 @@ public class Servlet extends HttpServlet {
     detectSentence();
     randomNumber = getRandomNumber();
     map = new HashMap<String, Integer>();
+    decimalFormat = new DecimalFormat(".###");
+
     System.out.println("Servlet " + this.getServletName() + " has started");
   }
 
@@ -245,7 +249,8 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(country, 1);
           }
-          System.out.println("COUNTRY: " + country + " COUNT: " + map.get(country));
+          double average = (double) map.get(country) / (double) PERSON_COUNT * 100;
+          System.out.println(country + ": " + decimalFormat.format(average) + "%");
         }
       }
     }
@@ -253,8 +258,11 @@ public class Servlet extends HttpServlet {
     for (String occupation : occupationList) {
       for (Person person : personList) {
         if (new String(person.getOccupation()).equals(occupation)) {
-          occupationCount++;
-          map.put(occupation, occupationCount);
+          if (map.get(occupation) != null) {
+            map.put(occupation, map.get(occupation) + 1);
+          } else {
+            map.put(occupation, 1);
+          }
           // System.out.println("OCCUPATION COUNT: " + occupationCount);
         }
       }
@@ -263,7 +271,11 @@ public class Servlet extends HttpServlet {
     for (String education : educationList) {
       for (Person person : personList) {
         if (person.getEducationLevel().equals(education)) {
-          educationCount++;
+          if (map.get(education) != null) {
+            map.put(education, map.get(education) + 1);
+          } else {
+            map.put(education, 1);
+          }
           map.put(education, educationCount);
           // System.out.println("EDUCATION COUNT: " + educationCount);
         }
@@ -273,7 +285,11 @@ public class Servlet extends HttpServlet {
     for (String maritalStatus : maritalStatusList) {
       for (Person person : personList) {
         if (person.getMaritalStatus().equals(maritalStatus)) {
-          maritalCount++;
+          if (map.get(maritalStatus) != null) {
+            map.put(maritalStatus, map.get(maritalStatus) + 1);
+          } else {
+            map.put(maritalStatus, 1);
+          }
           map.put(maritalStatus, maritalCount);
           // System.out.println("MARITAL COUNT: " + maritalCount);
         }
@@ -282,18 +298,24 @@ public class Servlet extends HttpServlet {
 
     for (String income : incomeList) {
       for (Person person : personList) {
-        if (person.getIncome() != null) {
-          incomeCount++;
-          map.put(income, incomeCount);
-          // System.out.println("INCOME COUNT: " + incomeCount);
+        if (map.get(income) != null) {
+          map.put(income, map.get(income) + 1);
+        } else {
+          map.put(income, 1);
         }
+        map.put(income, incomeCount);
+        // System.out.println("INCOME COUNT: " + incomeCount);
       }
     }
 
     for (String gender : genderList) {
       for (Person person : personList) {
         if (person.getGender().equals(gender)) {
-          genderCount++;
+          if (map.get(gender) != null) {
+            map.put(gender, map.get(gender) + 1);
+          } else {
+            map.put(gender, 1);
+          }
           map.put(gender, genderCount);
           // System.out.println("GENDER COUNT: " + genderCount);
         }
@@ -303,7 +325,11 @@ public class Servlet extends HttpServlet {
     for (String race : raceList) {
       for (Person person : personList) {
         if (person.getRace().equals(race)) {
-          raceCount++;
+          if (map.get(race) != null) {
+            map.put(race, map.get(race) + 1);
+          } else {
+            map.put(race, 1);
+          }
           map.put(race, raceCount);
           // System.out.println("RACE COUNT: " + raceCount);
         }
@@ -313,7 +339,7 @@ public class Servlet extends HttpServlet {
     Iterator it = map.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry pair = (Map.Entry) it.next();
-      System.out.println(pair.getKey() + " = " + pair.getValue());
+//      System.out.println(pair.getKey() + " = " + pair.getValue());
       it.remove(); // avoids a ConcurrentModificationException
     }
   }
