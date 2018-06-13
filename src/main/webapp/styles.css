@@ -51,10 +51,6 @@ body, html {
 	margin-top: 20px;
 }
 
-.navigation-bar {
-	width: 100%;
-}
-
 .navbar-wrapper {
     border-radius: 4px;
 }
@@ -63,4 +59,8 @@ body, html {
 	margin: 10px;
 	outline: none;
 	border: none;
+}
+
+#dataChart {
+	max-width: 40vw;
 }

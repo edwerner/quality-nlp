@@ -55,19 +55,13 @@ public class Servlet extends HttpServlet {
   private static final long serialVersionUID = -4751096228274971485L;
   public List<String> inputArray;
   public List<String> outputArray;
-  private ArrayList<String> duplicateList;
   private List<Person> personList;
   private String[] sentences;
   private final String TRAINING_DATA = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train";
   private final String TOKENIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-token.bin";
   private final String PERSONIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-ner-person.bin";
-  private final String SPEECH_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-pos-maxent.bin";
-  private final String CHUNKER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-chunker.bin";
-  private final String TRAINED_NAME_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\names";
   private final String TRAINED_CENSUS_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\census";
   private final int PERSON_COUNT = 32561;
-  private TokenizerME tokenizer;
-  private NameFinderME nameFinder;
   private DoccatModel model1;
   private DocumentCategorizerME inputCategorizer;
   private int randomNumber;
@@ -95,13 +89,11 @@ public class Servlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     inputArray = new ArrayList<String>();
-    duplicateList = new ArrayList<String>();
     trainModel();
     detectSentence();
-    randomNumber = getRandomNumber();
     map = new HashMap<String, Integer>();
     decimalFormat = new DecimalFormat(".###");
-
+    createAttributeLists();
     System.out.println("Servlet " + this.getServletName() + " has started");
   }
 
@@ -116,14 +108,6 @@ public class Servlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String input = request.getParameter("input");
     // String lastInput = null;
-
-    createAttributeLists(input);
-
-    if (input != null) {
-      inputArray.add(input);
-      inputArray.add(checkForNameMatch(input));
-      Collections.reverse(inputArray);
-    }
     request.setAttribute("matchFound", matchFound);
     request.setAttribute("inputArray", inputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
@@ -162,7 +146,7 @@ public class Servlet extends HttpServlet {
     }
   }
 
-  public void createAttributeLists(String input) {
+  public void createAttributeLists() {
 
     personList = new ArrayList<Person>();
     ageList = new ArrayList<String>();
@@ -197,37 +181,30 @@ public class Servlet extends HttpServlet {
 
           if (!occupationList.contains(person.getOccupation())) {
             occupationList.add(person.getOccupation());
-            // System.out.println("OCCUPATION: " + person.getOccupation());
           }
 
           if (!educationList.contains(person.getEducationLevel())) {
             educationList.add(person.getEducationLevel());
-            // System.out.println("EDUCATION: " + person.getEducationLevel());
           }
 
           if (!maritalStatusList.contains(person.getMaritalStatus())) {
             maritalStatusList.add(person.getMaritalStatus());
-            // System.out.println("MARITAL STATUS: " + person.getMaritalStatus());
           }
 
           if (!countryList.contains(person.getCountry())) {
             countryList.add(person.getCountry());
-            // System.out.println("COUNTRY: " + person.getCountry());
           }
 
           if (!incomeList.contains(person.getIncome())) {
             incomeList.add(person.getIncome());
-            // System.out.println("INCOME: " + person.getIncome());
           }
 
           if (!genderList.contains(person.getGender())) {
             genderList.add(person.getGender());
-            // System.out.println("GENDER: " + person.getGender());
           }
 
           if (!raceList.contains(person.getRace())) {
             raceList.add(person.getRace());
-            // System.out.println("RACE: " + person.getRace());
           }
         }
         personList.add(person);
@@ -238,8 +215,6 @@ public class Servlet extends HttpServlet {
 
   private void setAttributeCounts() {
 
-    // TODO: create nested hashmap
-
     for (String country : countryList) {
       for (Person person : personList) {
         if (new String(person.getCountry()).equals(country)) {
@@ -249,6 +224,7 @@ public class Servlet extends HttpServlet {
             map.put(country, 1);
           }
           countryAverage = (double) map.get(country) / (double) PERSON_COUNT * 100;
+          System.out.println("COUNTRY AVERAGE: " + countryAverage);
         }
       }
     }
@@ -328,29 +304,6 @@ public class Servlet extends HttpServlet {
         }
       }
     }
-
-//    Iterator it = map.entrySet().iterator();
-//    while (it.hasNext()) {
-//      Map.Entry pair = (Map.Entry) it.next();
-//      it.remove();
-//    }
-  }
-
-  private int getRandomNumber() {
-    Random rand = new Random();
-    int value = rand.nextInt(1);
-    return value;
-  }
-
-  public String checkForNameMatch(String name) {
-    if (name.toUpperCase().equals(matchString)) {
-      nameMatch = "Name match found!";
-      matchFound = "Name Match Found!";
-    } else {
-      nameMatch = "No name match found.";
-      matchFound = null;
-    }
-    return nameMatch;
   }
 
   @Override
@@ -375,7 +328,6 @@ public class Servlet extends HttpServlet {
   @SuppressWarnings("deprecation")
   public void detectSentence() {
     InputStream modelIn = null;
-    InputStream dataIn = null;
 
     try {
       modelIn = new FileInputStream(
@@ -388,17 +340,7 @@ public class Servlet extends HttpServlet {
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
 
       try {
-        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
-
-        InputStream tokenInputStream = new FileInputStream(TOKENIZER);
-        InputStream personInputStream = new FileInputStream(PERSONIZER);
-        TokenizerModel tokenModel = new TokenizerModel(tokenInputStream);
-
-        tokenizer = new TokenizerME(tokenModel);
-        TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(personInputStream);
-
-        // Instantiating the NameFinder class
-        nameFinder = new NameFinderME(tokenNameFinderModel);
+        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));;
       } catch (Exception e) {
         e.printStackTrace();
       } finally {
