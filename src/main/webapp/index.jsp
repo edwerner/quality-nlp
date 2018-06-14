@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="d" %>
 <!DOCTYPE HTML>
 <head>
 	<!-- Latest compiled and minified CSS -->
@@ -13,16 +12,29 @@
 </head>
 <body>
 	<div class="container flex flex-column flex-center">
-		<div class="match-found">
-			<c:if test="${matchFound != null}">
-				<div class="match-alert alert alert-success">
-					<h1>Name Match Found!</h1>
-				</div>
-			</c:if>
+		<div class="output flex flex-column">
+			<div class="output-inner">
+				<c:forEach var="entry" items="${inputArray}">
+					<div class="entry">
+						<c:out value="${entry}">
+							<canvas id="dataChart"></canvas>
+						</c:out>
+					</div>
+				</c:forEach>
+			</div>	
 		</div>
 		<canvas id="dataChart"></canvas>
+	
+			<c:forEach var="entry" items="${map}">
+			 	<c:out value="${entry}"/>
+			</c:forEach>
+			
 		<script>
+			// needs two data sets created in javascript
+			// first data set stores data
+			// second data set stores random colors
 			var context = document.getElementById('dataChart').getContext('2d');
+			
 			var data = {
 			    datasets: [{
 			        data: [10, 20, 30],
@@ -35,15 +47,24 @@
 			
 			    // These labels appear in the legend and in the tooltips when hovering different arcs
 			    labels: [
-			        'Red',
-			        'Yellow',
-			        'Blue'
+			        "Red",
+			        "Yellow",
+			        "Blue"
 			    ]
 			};
 			var myDoughnutChart = new Chart(context, {
 			    type: 'doughnut',
 			    data: data
 			});
+			
+			function getRandomColor() {
+			 	var letters = '0123456789ABCDEF';
+			 	var color = '#';
+			  	for (var i = 0; i < 6; i++) {
+			    	color += letters[Math.floor(Math.random() * 16)];
+			  	}
+			  	return color;
+			}
 		</script>			
 	</div>
 </body>

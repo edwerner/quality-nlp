@@ -25,6 +25,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.cmdline.postag.POSModelLoader;
@@ -64,9 +67,6 @@ public class Servlet extends HttpServlet {
   private final int PERSON_COUNT = 32561;
   private DoccatModel model1;
   private DocumentCategorizerME inputCategorizer;
-  private int randomNumber;
-  private String nameMatch;
-  private String matchString;
   private String matchFound;
   private List<String> occupationList;
   private List<String> ageList;
@@ -77,37 +77,40 @@ public class Servlet extends HttpServlet {
   private List<String> genderList;
   private List<String> raceList;
   private HashMap<String, Integer> map;
-  private double countryAverage;
-  private double occupationAverage;
-  private double educationAverage;
-  private double maritalStatusAverage;
-  private double incomeAverage;
-  private double genderAverage;
-  private double raceAverage;
+  private HashMap<String, String> percentageMap;
+  public String countryPercentage;
+  public String occupationPercentage;
+  public String educationPercentage;
+  public String maritalStatusPercentage;
+  public String incomePercentage;
+  public String genderPercentage;
+  public String racePercentage;
   private static DecimalFormat decimalFormat;
+  private JsonObject outerJsonObject;
+  private JsonObject innerJsonObject;
+  private Gson gson;
 
   @Override
   public void init() throws ServletException {
-    inputArray = new ArrayList<String>();
     trainModel();
     detectSentence();
+    gson = new Gson();
     map = new HashMap<String, Integer>();
-    decimalFormat = new DecimalFormat(".###");
+    percentageMap = new HashMap<String, String>();
     createAttributeLists();
+    decimalFormat = new DecimalFormat(".###");
+    outerJsonObject = new JsonObject();
     System.out.println("Servlet " + this.getServletName() + " has started");
   }
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    request.setAttribute("inputArray", inputArray);
+    request.setAttribute("map", percentageMap);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
-    // trainModel();
   }
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String input = request.getParameter("input");
-    // String lastInput = null;
     request.setAttribute("matchFound", matchFound);
     request.setAttribute("inputArray", inputArray);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
@@ -223,8 +226,8 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(country, 1);
           }
-          countryAverage = (double) map.get(country) / (double) PERSON_COUNT * 100;
-          System.out.println("COUNTRY AVERAGE: " + countryAverage);
+          countryPercentage = Double.toString((double) map.get(country) / (double) PERSON_COUNT * 100);
+          percentageMap.put(country, gson.toJson(countryPercentage));
         }
       }
     }
@@ -237,7 +240,8 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(occupation, 1);
           }
-          occupationAverage = (double) map.get(occupation) / (double) PERSON_COUNT * 100;
+          occupationPercentage = Double.toString((double) map.get(occupation) / (double) PERSON_COUNT * 100);
+          percentageMap.put(occupation, gson.toJson(occupationPercentage));
         }
       }
     }
@@ -250,7 +254,8 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(education, 1);
           }
-          educationAverage = (double) map.get(education) / (double) PERSON_COUNT * 100;
+          educationPercentage = Double.toString((double) map.get(education) / (double) PERSON_COUNT * 100);
+          percentageMap.put(education, gson.toJson(educationPercentage));
         }
       }
     }
@@ -263,7 +268,8 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(maritalStatus, 1);
           }
-          maritalStatusAverage = (double) map.get(maritalStatus) / (double) PERSON_COUNT * 100;
+          maritalStatusPercentage = Double.toString((double) map.get(maritalStatus) / (double) PERSON_COUNT * 100);
+          percentageMap.put(maritalStatus, gson.toJson(maritalStatusPercentage));
         }
       }
     }
@@ -275,7 +281,8 @@ public class Servlet extends HttpServlet {
         } else {
           map.put(income, 1);
         }
-        incomeAverage = (double) map.get(income) / (double) PERSON_COUNT * 100;
+        incomePercentage = Double.toString((double) map.get(income) / (double) PERSON_COUNT * 100);
+        percentageMap.put(income, gson.toJson(incomePercentage));
       }
     }
 
@@ -287,7 +294,8 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(gender, 1);
           }
-          genderAverage = (double) map.get(gender) / (double) PERSON_COUNT * 100;
+          genderPercentage = Double.toString((double) map.get(gender) / (double) PERSON_COUNT * 100);
+          percentageMap.put(gender, gson.toJson(genderPercentage));
         }
       }
     }
@@ -300,7 +308,8 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(race, 1);
           }
-          raceAverage = (double) map.get(race) / (double) PERSON_COUNT * 100;
+          racePercentage = Double.toString((double) map.get(race) / (double) PERSON_COUNT * 100);
+          percentageMap.put(race, gson.toJson(racePercentage));
         }
       }
     }
