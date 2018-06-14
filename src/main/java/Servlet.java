@@ -97,15 +97,16 @@ public class Servlet extends HttpServlet {
     gson = new Gson();
     map = new HashMap<String, Integer>();
     percentageMap = new HashMap<String, String>();
+    decimalFormat = new DecimalFormat(".##");
     createAttributeLists();
-    decimalFormat = new DecimalFormat(".###");
     outerJsonObject = new JsonObject();
     System.out.println("Servlet " + this.getServletName() + " has started");
   }
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    request.setAttribute("map", percentageMap);
+    String json = gson.toJson(percentageMap);
+    request.setAttribute("map", json);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   }
 
@@ -226,7 +227,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(country, 1);
           }
-          countryPercentage = Double.toString((double) map.get(country) / (double) PERSON_COUNT * 100);
+          countryPercentage = decimalFormat.format((double) map.get(country) / (double) PERSON_COUNT * 100);
           percentageMap.put(country, gson.toJson(countryPercentage));
         }
       }
@@ -240,7 +241,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(occupation, 1);
           }
-          occupationPercentage = Double.toString((double) map.get(occupation) / (double) PERSON_COUNT * 100);
+          occupationPercentage = decimalFormat.format((double) map.get(occupation) / (double) PERSON_COUNT * 100);
           percentageMap.put(occupation, gson.toJson(occupationPercentage));
         }
       }
@@ -254,7 +255,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(education, 1);
           }
-          educationPercentage = Double.toString((double) map.get(education) / (double) PERSON_COUNT * 100);
+          educationPercentage = decimalFormat.format((double) map.get(education) / (double) PERSON_COUNT * 100);
           percentageMap.put(education, gson.toJson(educationPercentage));
         }
       }
@@ -268,7 +269,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(maritalStatus, 1);
           }
-          maritalStatusPercentage = Double.toString((double) map.get(maritalStatus) / (double) PERSON_COUNT * 100);
+          maritalStatusPercentage = decimalFormat.format((double) map.get(maritalStatus) / (double) PERSON_COUNT * 100);
           percentageMap.put(maritalStatus, gson.toJson(maritalStatusPercentage));
         }
       }
@@ -281,7 +282,7 @@ public class Servlet extends HttpServlet {
         } else {
           map.put(income, 1);
         }
-        incomePercentage = Double.toString((double) map.get(income) / (double) PERSON_COUNT * 100);
+        incomePercentage = decimalFormat.format((double) map.get(income) / (double) PERSON_COUNT * 100);
         percentageMap.put(income, gson.toJson(incomePercentage));
       }
     }
@@ -294,7 +295,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(gender, 1);
           }
-          genderPercentage = Double.toString((double) map.get(gender) / (double) PERSON_COUNT * 100);
+          genderPercentage = decimalFormat.format((double) map.get(gender) / (double) PERSON_COUNT * 100);
           percentageMap.put(gender, gson.toJson(genderPercentage));
         }
       }
@@ -308,7 +309,7 @@ public class Servlet extends HttpServlet {
           } else {
             map.put(race, 1);
           }
-          racePercentage = Double.toString((double) map.get(race) / (double) PERSON_COUNT * 100);
+          racePercentage = decimalFormat.format((double) map.get(race) / (double) PERSON_COUNT * 100);
           percentageMap.put(race, gson.toJson(racePercentage));
         }
       }
