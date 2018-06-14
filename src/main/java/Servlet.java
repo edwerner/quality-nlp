@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import opennlp.tools.chunker.ChunkerME;
@@ -105,8 +106,10 @@ public class Servlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    JsonObject jsonObject = new JsonObject();
     String json = gson.toJson(percentageMap);
-    request.setAttribute("map", json);
+    jsonObject.addProperty("data", json);
+    request.setAttribute("map", jsonObject);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   }
 
