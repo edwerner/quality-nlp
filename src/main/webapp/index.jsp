@@ -25,15 +25,14 @@
 		</div>
 		<canvas id="dataChart"></canvas>
 	
-			<c:forEach var="entry" items="${countryPercentageMap}">
-			 	<c:out value="${entry}"/>
-			</c:forEach>
+			
 			
 		<script>
 			// needs two data sets created in javascript
 			// first data set stores data
 			// second data set stores random colors
 			var context = document.getElementById('dataChart').getContext('2d');
+			
 			
 			var data = {
 			    datasets: [{
@@ -47,9 +46,9 @@
 			
 			    // These labels appear in the legend and in the tooltips when hovering different arcs
 			    labels: [
-			        "Red",
-			        "Yellow",
-			        "Blue"
+			    <c:forEach var="entry" items="${countryPercentageMap}">
+			 		<c:out value="\"${entry.key}\"" escapeXml="false"/>,
+				</c:forEach>
 			    ]
 			};
 			var myDoughnutChart = new Chart(context, {
