@@ -25,7 +25,7 @@
 		</div>
 		<canvas id="dataChart"></canvas>
 	
-			<c:forEach var="entry" items="${map.data}">
+			<c:forEach var="entry" items="${agePercentageMap}">
 			 	<c:out value="${entry}"/>
 			</c:forEach>
 			
