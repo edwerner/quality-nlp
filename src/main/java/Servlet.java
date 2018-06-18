@@ -78,16 +78,16 @@ public class Servlet extends HttpServlet {
   private List<String> genderList;
   private List<String> raceList;
   private HashMap<String, Integer> map;
-  private HashMap<String, String> percentageMap;
+  
   private HashMap<String, String> agePercentageMap;
   private HashMap<String, String> occupationPercentageMap;
   private HashMap<String, String> educationPercentageMap;
-  private HashMap<String, String> maritalPercentageMap;
+  private HashMap<String, String> mariralPercentageMap;
   private HashMap<String, String> countryPercentageMap;
   private HashMap<String, String> incomePercentageMap;
   private HashMap<String, String> genderPercentageMap;
   private HashMap<String, String> racePercentageMap;
-  public String agePercentage;
+  
   public String countryPercentage;
   public String occupationPercentage;
   public String educationPercentage;
@@ -105,20 +105,11 @@ public class Servlet extends HttpServlet {
     trainModel();
     detectSentence();
     gson = new Gson();
-    personList = new ArrayList<Person>();
-    ageList = new ArrayList<String>();
-    occupationList = new ArrayList<String>();
-    educationList = new ArrayList<String>();
-    maritalStatusList = new ArrayList<String>();
-    countryList = new ArrayList<String>();
-    incomeList = new ArrayList<String>();
-    genderList = new ArrayList<String>();
-    raceList = new ArrayList<String>();
     map = new HashMap<String, Integer>();
     agePercentageMap = new HashMap<String, String>();
     occupationPercentageMap = new HashMap<String, String>();
     educationPercentageMap = new HashMap<String, String>();
-    maritalPercentageMap = new HashMap<String, String>();
+    mariralPercentageMap = new HashMap<String, String>();
     countryPercentageMap = new HashMap<String, String>();
     incomePercentageMap = new HashMap<String, String>();
     genderPercentageMap = new HashMap<String, String>();
@@ -134,7 +125,8 @@ public class Servlet extends HttpServlet {
 //    JsonObject jsonObject = new JsonObject();
 //    String json = gson.toJson(percentageMap);
 //    jsonObject.addProperty("data", json);
-    request.setAttribute("agePercentageMap", agePercentageMap);
+    
+    request.setAttribute("countryPercentageMap", countryPercentageMap);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   }
 
@@ -179,6 +171,16 @@ public class Servlet extends HttpServlet {
   }
 
   public void createAttributeLists() {
+
+    personList = new ArrayList<Person>();
+    ageList = new ArrayList<String>();
+    occupationList = new ArrayList<String>();
+    educationList = new ArrayList<String>();
+    maritalStatusList = new ArrayList<String>();
+    countryList = new ArrayList<String>();
+    incomeList = new ArrayList<String>();
+    genderList = new ArrayList<String>();
+    raceList = new ArrayList<String>();
 
     if (sentences != null) {
 
@@ -234,22 +236,8 @@ public class Servlet extends HttpServlet {
     }
     setAttributeCounts();
   }
-
+  
   private void setAttributeCounts() {
-
-    for (String age : ageList) {
-      for (Person person : personList) {
-        if (new String(person.getCountry()).equals(age)) {
-          if (map.get(age) != null) {
-            map.put(age, map.get(age) + 1);
-          } else {
-            map.put(age, 1);
-          }
-          agePercentage = decimalFormat.format((double) map.get(age) / (double) PERSON_COUNT * 100);
-          agePercentageMap.put(age, gson.toJson(agePercentage));
-        }
-      }
-    }
 
     for (String country : countryList) {
       for (Person person : personList) {
@@ -302,7 +290,7 @@ public class Servlet extends HttpServlet {
             map.put(maritalStatus, 1);
           }
           maritalStatusPercentage = decimalFormat.format((double) map.get(maritalStatus) / (double) PERSON_COUNT * 100);
-          maritalPercentageMap.put(maritalStatus, gson.toJson(maritalStatusPercentage));
+          mariralPercentageMap.put(maritalStatus, gson.toJson(maritalStatusPercentage));
         }
       }
     }
