@@ -121,6 +121,128 @@
             </script>		
         </div>
         
+        <div id="marital-chart" class="chart navbar navbar-default flex flex-center flex-column">
+            <h2>Marital Status</h2>
+            <canvas id="maritalChart" class="chartCanvas"></canvas>
+            <script>
+                var maritalContext = document.getElementById('maritalChart').getContext('2d');
+                var maritalData = {
+                    datasets: [{
+                    data: [
+                	    <c:forEach var="entry" items="${maritalPercentageMap}">
+                	 		<c:out value="${entry.value}" escapeXml="false"/>,
+                		</c:forEach>
+                	],
+                       backgroundColor: [
+                	    <c:forEach var="entry" items="${maritalPercentageMap}">
+                	 		<c:out value="getRandomColor()" escapeXml="false"/>,
+                		</c:forEach>
+                 	],
+                }],
+                labels: [
+                <c:forEach var="entry" items="${maritalPercentageMap}">
+             		<c:out value="\"${entry.key}\"" escapeXml="false"/>,
+            	</c:forEach>
+                ]};
+                var maritalChart = new Chart(maritalContext, {
+                    type: 'doughnut',
+                    data: maritalData
+                });
+            </script>		
+        </div>
+        
+        <div id="income-chart" class="chart navbar navbar-default flex flex-center flex-column">
+            <h2>Annual Income</h2>
+            <canvas id="incomeChart" class="chartCanvas"></canvas>
+            <script>
+                var incomeContext = document.getElementById('incomeChart').getContext('2d');
+                var incomeData = {
+                    datasets: [{
+                    data: [
+                	    <c:forEach var="entry" items="${incomePercentageMap}">
+                	 		<c:out value="${entry.value}" escapeXml="false"/>,
+                		</c:forEach>
+                	],
+                       backgroundColor: [
+                	    <c:forEach var="entry" items="${incomePercentageMap}">
+                	 		<c:out value="getRandomColor()" escapeXml="false"/>,
+                		</c:forEach>
+                 	],
+                }],
+                labels: [
+                <c:forEach var="entry" items="${incomePercentageMap}">
+             		<c:out value="\"${entry.key}\"" escapeXml="false"/>,
+            	</c:forEach>
+                ]};
+                var maritalChart = new Chart(incomeContext, {
+                    type: 'doughnut',
+                    data: incomeData
+                });
+            </script>		
+        </div>
+        
+        
+        <div id="gender-chart" class="chart navbar navbar-default flex flex-center flex-column">
+            <h2>Gender</h2>
+            <canvas id="genderChart" class="chartCanvas"></canvas>
+            <script>
+                var genderContext = document.getElementById('genderChart').getContext('2d');
+                var genderData = {
+                    datasets: [{
+                    data: [
+                	    <c:forEach var="entry" items="${genderPercentageMap}">
+                	 		<c:out value="${entry.value}" escapeXml="false"/>,
+                		</c:forEach>
+                	],
+                       backgroundColor: [
+                	    <c:forEach var="entry" items="${genderPercentageMap}">
+                	 		<c:out value="getRandomColor()" escapeXml="false"/>,
+                		</c:forEach>
+                 	],
+                }],
+                labels: [
+                <c:forEach var="entry" items="${genderPercentageMap}">
+             		<c:out value="\"${entry.key}\"" escapeXml="false"/>,
+            	</c:forEach>
+                ]};
+                var genderChart = new Chart(genderContext, {
+                    type: 'doughnut',
+                    data: genderData
+                });
+            </script>		
+        </div>
+        
+        
+        <div id="race-chart" class="chart navbar navbar-default flex flex-center flex-column">
+            <h2>Race</h2>
+            <canvas id="raceChart" class="chartCanvas"></canvas>
+            <script>
+                var raceContext = document.getElementById('raceChart').getContext('2d');
+                var raceData = {
+                    datasets: [{
+                    data: [
+                	    <c:forEach var="entry" items="${racePercentageMap}">
+                	 		<c:out value="${entry.value}" escapeXml="false"/>,
+                		</c:forEach>
+                	],
+                       backgroundColor: [
+                	    <c:forEach var="entry" items="${racePercentageMap}">
+                	 		<c:out value="getRandomColor()" escapeXml="false"/>,
+                		</c:forEach>
+                 	],
+                }],
+                labels: [
+                <c:forEach var="entry" items="${racePercentageMap}">
+             		<c:out value="\"${entry.key}\"" escapeXml="false"/>,
+            	</c:forEach>
+                ]};
+                var raceChart = new Chart(raceContext, {
+                    type: 'doughnut',
+                    data: raceData
+                });
+            </script>		
+        </div>
+        
         
         
         <div id="country-chart" class="chart navbar navbar-default flex flex-center flex-column">
