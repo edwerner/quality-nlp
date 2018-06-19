@@ -61,10 +61,10 @@ public class Servlet extends HttpServlet {
   public List<String> outputArray;
   private List<Person> personList;
   private String[] sentences;
-  private final String TRAINING_DATA = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train";
+  private final String TRAINING_DATA = "en-sent.train";
   private final String TOKENIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-token.bin";
   private final String PERSONIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-ner-person.bin";
-  private final String TRAINED_CENSUS_MODEL = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\census";
+  private final String TRAINED_CENSUS_MODEL = "census";
   private final int PERSON_COUNT = 32561;
   private DoccatModel model1;
   private DocumentCategorizerME inputCategorizer;
@@ -384,8 +384,7 @@ public class Servlet extends HttpServlet {
     InputStream modelIn = null;
 
     try {
-      modelIn = new FileInputStream(
-          "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.bin");
+      modelIn = new FileInputStream("en-sent.bin");
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
     }
@@ -395,7 +394,6 @@ public class Servlet extends HttpServlet {
 
       try {
         sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
-        ;
       } catch (Exception e) {
         e.printStackTrace();
       } finally {
