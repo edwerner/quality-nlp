@@ -383,14 +383,10 @@ public class Servlet extends HttpServlet {
       ClassLoader classLoader = getClass().getClassLoader();
       File file = new File(classLoader.getResource("en-sent.bin").getFile());
       modelIn = new FileInputStream(file);
-    } catch (FileNotFoundException e1) {
-      e1.printStackTrace();
-    } finally {
       try {
         SentenceModel model = new SentenceModel(modelIn);
         SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
         try {
-          ClassLoader classLoader = getClass().getClassLoader();
           String fileString = new File(classLoader.getResource("en-sent.train").getFile()).toString();
           sentences = sentenceDetector.sentDetect(readFileToString(fileString));
         } catch (Exception e) {
@@ -407,6 +403,8 @@ public class Servlet extends HttpServlet {
           }
         }
       }
+    } catch (FileNotFoundException e1) {
+      e1.printStackTrace();
     }
   }
 }
