@@ -61,7 +61,7 @@ public class Servlet extends HttpServlet {
   public List<String> outputArray;
   private List<Person> personList;
   private String[] sentences;
-  private final String TRAINING_DATA = "en-sent.train";
+  private final String TRAINING_DATA = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-sent.train";
   private final String TOKENIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-token.bin";
   private final String PERSONIZER = "C:\\Program Files\\Apache Software Foundation\\apache-opennlp-1.8.4\\models\\en-ner-person.bin";
   private final String TRAINED_CENSUS_MODEL = "census";
@@ -103,7 +103,7 @@ public class Servlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    trainModel();
+//    trainModel();
     detectSentence();
     gson = new Gson();
     map = new HashMap<String, Integer>();
@@ -141,38 +141,38 @@ public class Servlet extends HttpServlet {
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   };
 
-  public void trainModel() {
-    InputStream dataIn = null;
-
-    try {
-
-      // dataIn = new FileInputStream(TRAINING_DATA);
-      // ObjectStream<String> lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
-      // ObjectStream<DocumentSample> sampleStream = new
-      // DocumentSampleStream(lineStream);
-      // int cutoff = 2;
-      // int trainingIterations = 30;
-      // model1 = DocumentCategorizerME.train("en", sampleStream);
-
-      dataIn = new FileInputStream(TRAINED_CENSUS_MODEL);
-      DoccatModel tokenizerModel = new DoccatModel(dataIn);
-      inputCategorizer = new DocumentCategorizerME(tokenizerModel);
-
-      // BufferedOutputStream modelOut = new BufferedOutputStream(new
-      // FileOutputStream("census"));
-      // model1.serialize(modelOut);
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      if (dataIn != null) {
-        try {
-          dataIn.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-  }
+//  public void trainModel() {
+//    InputStream dataIn = null;
+//
+//    try {
+//
+//      // dataIn = new FileInputStream(TRAINING_DATA);
+//      // ObjectStream<String> lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
+//      // ObjectStream<DocumentSample> sampleStream = new
+//      // DocumentSampleStream(lineStream);
+//      // int cutoff = 2;
+//      // int trainingIterations = 30;
+//      // model1 = DocumentCategorizerME.train("en", sampleStream);
+//
+//      dataIn = new FileInputStream(TRAINED_CENSUS_MODEL);
+//      DoccatModel tokenizerModel = new DoccatModel(dataIn);
+//      inputCategorizer = new DocumentCategorizerME(tokenizerModel);
+//
+//      // BufferedOutputStream modelOut = new BufferedOutputStream(new
+//      // FileOutputStream("census"));
+//      // model1.serialize(modelOut);
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    } finally {
+//      if (dataIn != null) {
+//        try {
+//          dataIn.close();
+//        } catch (IOException e) {
+//          e.printStackTrace();
+//        }
+//      }
+//    }
+//  }
 
   public void createAttributeLists() {
 
@@ -384,20 +384,21 @@ public class Servlet extends HttpServlet {
     InputStream modelIn = null;
 
     try {
-      modelIn = new FileInputStream("en-sent.bin");
+      ClassLoader classLoader = getClass().getClassLoader();
+      File file = new File(classLoader.getResource("en-sent.bin").getFile());
+      modelIn = new FileInputStream(file);
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
     }
     try {
       SentenceModel model = new SentenceModel(modelIn);
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
-
       try {
-        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
+        ClassLoader classLoader = getClass().getClassLoader();
+        String fileString = new File(classLoader.getResource("en-sent.train").getFile()).toString();
+        sentences = sentenceDetector.sentDetect(readFileToString(fileString));
       } catch (Exception e) {
         e.printStackTrace();
-      } finally {
-
       }
     } catch (IOException e) {
       e.printStackTrace();
