@@ -78,16 +78,16 @@ public class Servlet extends HttpServlet {
   private List<String> genderList;
   private List<String> raceList;
   private HashMap<String, Integer> map;
-  
+
   private HashMap<String, String> agePercentageMap;
   private HashMap<String, String> occupationPercentageMap;
   private HashMap<String, String> educationPercentageMap;
-  private HashMap<String, String> mariralPercentageMap;
+  private HashMap<String, String> maritalPercentageMap;
   private HashMap<String, String> countryPercentageMap;
   private HashMap<String, String> incomePercentageMap;
   private HashMap<String, String> genderPercentageMap;
   private HashMap<String, String> racePercentageMap;
-  
+
   public String countryPercentage;
   public String occupationPercentage;
   public String educationPercentage;
@@ -95,6 +95,7 @@ public class Servlet extends HttpServlet {
   public String incomePercentage;
   public String genderPercentage;
   public String racePercentage;
+  public String agePercentage;
   private static DecimalFormat decimalFormat;
   private JsonObject outerJsonObject;
   private JsonObject innerJsonObject;
@@ -109,7 +110,7 @@ public class Servlet extends HttpServlet {
     agePercentageMap = new HashMap<String, String>();
     occupationPercentageMap = new HashMap<String, String>();
     educationPercentageMap = new HashMap<String, String>();
-    mariralPercentageMap = new HashMap<String, String>();
+    maritalPercentageMap = new HashMap<String, String>();
     countryPercentageMap = new HashMap<String, String>();
     incomePercentageMap = new HashMap<String, String>();
     genderPercentageMap = new HashMap<String, String>();
@@ -122,11 +123,14 @@ public class Servlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//    JsonObject jsonObject = new JsonObject();
-//    String json = gson.toJson(percentageMap);
-//    jsonObject.addProperty("data", json);
-    
+    request.setAttribute("agePercentageMap", agePercentageMap);
+    request.setAttribute("occupationPercentageMap", occupationPercentageMap);
     request.setAttribute("countryPercentageMap", countryPercentageMap);
+    request.setAttribute("educationPercentageMap", educationPercentageMap);
+    request.setAttribute("maritalPercentageMap", maritalPercentageMap);
+    request.setAttribute("incomePercentageMap", incomePercentageMap);
+    request.setAttribute("genderPercentageMap", genderPercentageMap);
+    request.setAttribute("racePercentageMap", racePercentageMap);
     request.getRequestDispatcher("/index.jsp").forward(request, response);
   }
 
@@ -201,7 +205,11 @@ public class Servlet extends HttpServlet {
           person.setGender(split[9]);
           person.setRace(split[8]);
 
-          ageList.add(person.getAge());
+//          ageList.add(person.getAge());
+
+          if (!ageList.contains(person.getAge())) {
+            ageList.add(person.getAge());
+          }
 
           if (!occupationList.contains(person.getOccupation())) {
             occupationList.add(person.getOccupation());
@@ -236,7 +244,7 @@ public class Servlet extends HttpServlet {
     }
     setAttributeCounts();
   }
-  
+
   private void setAttributeCounts() {
 
     for (String country : countryList) {
@@ -290,20 +298,36 @@ public class Servlet extends HttpServlet {
             map.put(maritalStatus, 1);
           }
           maritalStatusPercentage = decimalFormat.format((double) map.get(maritalStatus) / (double) PERSON_COUNT * 100);
-          mariralPercentageMap.put(maritalStatus, gson.toJson(maritalStatusPercentage));
+          maritalPercentageMap.put(maritalStatus, gson.toJson(maritalStatusPercentage));
         }
       }
     }
 
     for (String income : incomeList) {
       for (Person person : personList) {
-        if (map.get(income) != null) {
-          map.put(income, map.get(income) + 1);
-        } else {
-          map.put(income, 1);
+        if (person.getIncome().equals(income)) {
+          if (map.get(income) != null) {
+            map.put(income, map.get(income) + 1);
+          } else {
+            map.put(income, 1);
+          }
+          incomePercentage = decimalFormat.format((double) map.get(income) / (double) PERSON_COUNT * 100);
+          incomePercentageMap.put(income, gson.toJson(incomePercentage));
         }
-        incomePercentage = decimalFormat.format((double) map.get(income) / (double) PERSON_COUNT * 100);
-        incomePercentageMap.put(income, gson.toJson(incomePercentage));
+      }
+    }
+    
+    for (String age : ageList) {
+      for (Person person : personList) {
+        if (person.getAge().equals(age)) {
+          if (map.get(age) != null) {
+            map.put(age, map.get(age) + 1);
+          } else {
+            map.put(age, 1);
+          }
+          agePercentage = decimalFormat.format((double) map.get(age) / (double) PERSON_COUNT * 100);
+          agePercentageMap.put(age, gson.toJson(agePercentage));
+        }
       }
     }
 
@@ -370,7 +394,8 @@ public class Servlet extends HttpServlet {
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
 
       try {
-        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));;
+        sentences = sentenceDetector.sentDetect(readFileToString(TRAINING_DATA));
+        ;
       } catch (Exception e) {
         e.printStackTrace();
       } finally {
