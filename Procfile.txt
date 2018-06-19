@@ -1,1 +1,1 @@
-web: java -jar target/quality-nlp.war
+web: target/quality-nlp.war
