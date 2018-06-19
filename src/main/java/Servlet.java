@@ -205,11 +205,11 @@ public class Servlet extends HttpServlet {
           person.setGender(split[9]);
           person.setRace(split[8]);
 
-//          ageList.add(person.getAge());
-
           if (!ageList.contains(person.getAge())) {
             ageList.add(person.getAge());
           }
+          
+          Collections.sort(ageList);
 
           if (!occupationList.contains(person.getOccupation())) {
             occupationList.add(person.getOccupation());

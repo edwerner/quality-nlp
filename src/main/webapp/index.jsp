@@ -91,6 +91,37 @@
             </script>		
         </div>
         
+        <div id="education-chart" class="chart navbar navbar-default flex flex-center flex-column">
+            <h2>Education</h2>
+            <canvas id="educationChart" class="chartCanvas"></canvas>
+            <script>
+                var educationContext = document.getElementById('educationChart').getContext('2d');
+                var educationData = {
+                    datasets: [{
+                    data: [
+                	    <c:forEach var="entry" items="${educationPercentageMap}">
+                	 		<c:out value="${entry.value}" escapeXml="false"/>,
+                		</c:forEach>
+                	],
+                       backgroundColor: [
+                	    <c:forEach var="entry" items="${educationPercentageMap}">
+                	 		<c:out value="getRandomColor()" escapeXml="false"/>,
+                		</c:forEach>
+                 	],
+                }],
+                labels: [
+                <c:forEach var="entry" items="${educationPercentageMap}">
+             		<c:out value="\"${entry.key}\"" escapeXml="false"/>,
+            	</c:forEach>
+                ]};
+                var occupationChart = new Chart(educationContext, {
+                    type: 'doughnut',
+                    data: educationData
+                });
+            </script>		
+        </div>
+        
+        
         
         <div id="country-chart" class="chart navbar navbar-default flex flex-center flex-column">
             <h2>Country</h2>
