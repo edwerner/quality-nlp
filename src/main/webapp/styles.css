@@ -61,6 +61,28 @@ body, html {
 	border: none;
 }
 
-#dataChart {
-	max-width: 50vw;
+.headline {
+	text-align: center;
+}
+
+.chartCanvas {
+	width: 100%
+	max-width: 25vw;
+}
+
+.chart {
+	width: 100%;
+	height: auto;
+	padding: 25px;
+}
+
+#charts {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 50px;
+	max-width: 600px;
+}
+
+.navbar {
+	padding: 25px;
 }
