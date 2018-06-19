@@ -378,11 +378,14 @@ public class Servlet extends HttpServlet {
   @SuppressWarnings("deprecation")
   public void detectSentence() {
     InputStream modelIn = null;
+    ClassLoader classLoader = getClass().getClassLoader();
 
     try {
-      ClassLoader classLoader = getClass().getClassLoader();
       File file = new File(classLoader.getResource("en-sent.bin").getFile());
       modelIn = new FileInputStream(file);
+    } catch (FileNotFoundException e1) {
+      e1.printStackTrace();
+    } finally {
       try {
         SentenceModel model = new SentenceModel(modelIn);
         SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
@@ -403,8 +406,6 @@ public class Servlet extends HttpServlet {
           }
         }
       }
-    } catch (FileNotFoundException e1) {
-      e1.printStackTrace();
     }
   }
 }
