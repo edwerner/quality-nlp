@@ -97,13 +97,10 @@ public class Servlet extends HttpServlet {
   public String racePercentage;
   public String agePercentage;
   private static DecimalFormat decimalFormat;
-  private JsonObject outerJsonObject;
-  private JsonObject innerJsonObject;
   private Gson gson;
 
   @Override
   public void init() throws ServletException {
-//    trainModel();
     detectSentence();
     gson = new Gson();
     map = new HashMap<String, Integer>();
@@ -117,7 +114,6 @@ public class Servlet extends HttpServlet {
     racePercentageMap = new HashMap<String, String>();
     decimalFormat = new DecimalFormat(".##");
     createAttributeLists();
-    outerJsonObject = new JsonObject();
     System.out.println("Servlet " + this.getServletName() + " has started");
   }
 
@@ -389,25 +385,26 @@ public class Servlet extends HttpServlet {
       modelIn = new FileInputStream(file);
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
-    }
-    try {
-      SentenceModel model = new SentenceModel(modelIn);
-      SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
-      try {
-        ClassLoader classLoader = getClass().getClassLoader();
-        String fileString = new File(classLoader.getResource("en-sent.train").getFile()).toString();
-        sentences = sentenceDetector.sentDetect(readFileToString(fileString));
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
     } finally {
-      if (modelIn != null) {
+      try {
+        SentenceModel model = new SentenceModel(modelIn);
+        SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
         try {
-          modelIn.close();
-        } catch (IOException e) {
+          ClassLoader classLoader = getClass().getClassLoader();
+          String fileString = new File(classLoader.getResource("en-sent.train").getFile()).toString();
+          sentences = sentenceDetector.sentDetect(readFileToString(fileString));
+        } catch (Exception e) {
           e.printStackTrace();
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
+        if (modelIn != null) {
+          try {
+            modelIn.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
         }
       }
     }
